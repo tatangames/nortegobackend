@@ -21,7 +21,7 @@ return new class extends Migration
 
             // cuando el usuario ingreso el codigo por primera vez
             $table->boolean('verificado');
-            $table->dateTime('fecha_verificado');
+            $table->dateTime('fecha_verificado')->nullable();
 
             // tiempo para reintento
             $table->dateTime('fechareintento');

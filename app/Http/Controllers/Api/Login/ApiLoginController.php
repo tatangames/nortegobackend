@@ -44,7 +44,7 @@ class ApiLoginController extends Controller
 
                 // se verifica cuanto tiempo debe esperar el usuario para hacer un reintento de mensaje
                 $currentDate = Carbon::now('America/El_Salvador');
-                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->reintento);
+                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->fechareintento);
 
                 if ($minutesPassed >= $retryAfterMinutes) {
                     // Puedes reintentar enviar el mensaje
@@ -53,8 +53,9 @@ class ApiLoginController extends Controller
                 } else {
                     // Debes esperar más tiempo
                     $canRetry = false;
-                    $minutesToWait = $retryAfterMinutes - $minutesPassed;
+                    $minutesToWait = $this->convertirMinutosASegundos($retryAfterMinutes - $minutesPassed);
                 }
+
 
 
                 //******* AQUI SE ENVIA SMS ***********
@@ -70,6 +71,7 @@ class ApiLoginController extends Controller
                     for($i = 0; $i < 4; $i++) {
                         $codigo .= mt_rand(0, 9);
                     }
+
                     Usuario::where('id', $infoUsuario->id)
                         ->update([
                             'codigo' => $codigo,
@@ -77,8 +79,6 @@ class ApiLoginController extends Controller
                         ]);
 
                     // Enviar codigo SMS
-
-
                 }
 
                 //************************************
@@ -86,7 +86,7 @@ class ApiLoginController extends Controller
 
                 // Enviar datos
                 DB::commit();
-                return ['success' => 2, 'canretry' => $canRetry, 'minutos' => $minutesToWait];
+                return ['success' => 2, 'canretry' => $canRetry, 'segundos' => $minutesToWait];
 
             } else {
 
@@ -124,13 +124,11 @@ class ApiLoginController extends Controller
                 $detaRe->save();
 
 
-
                 //************************************
 
 
-
                 DB::commit();
-                return ['success' => 2, 'canretry' => $canRetry, 'minutos' => $minutesToWait];
+                return ['success' => 2, 'canretry' => $canRetry, 'segundos' => $minutesToWait];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -138,6 +136,12 @@ class ApiLoginController extends Controller
             return ['success' => 99];
         }
     }
+
+    private function convertirMinutosASegundos($minutos)
+    {
+        return $minutos * 60;
+    }
+
 
 
     // SOLICITUD DE CODIGO DE CONFIRMACION
@@ -171,7 +175,7 @@ class ApiLoginController extends Controller
 
                 $currentDate = Carbon::now('America/El_Salvador');
 
-                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->reintento);
+                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->fechareintento);
 
                 if ($minutesPassed >= $retryAfterMinutes) {
                     // Puedes reintentar enviar el mensaje
