@@ -8,10 +8,8 @@ use App\Models\Usuario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiLoginController extends Controller
@@ -32,75 +30,82 @@ class ApiLoginController extends Controller
 
         try {
 
-            $retryAfterMinutes = 2;
+            // TIEMPO QUE DEBE ESPERAR EL USUARIO PARA REENVIAR CODIGO SMS
+            $limiteSegundosSMS = 20;
 
-            // solicitud para iniciar sesion
-            if($infoUsuario = Usuario::where('telefono', $request->telefono)->first()){
+            // QUITAR ESPACIOS QUE VIENEN DEL NUMERO
+            $telefono = str_replace(' ', '', $request->telefono);
 
-                // usuario inactivo
+            // GENERAR CODIGO
+            $codigo = '';
+            for($i = 0; $i < 6; $i++) {
+                $codigo .= mt_rand(0, 9);
+            }
+
+            if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
+
+                // USUARIO BLOQUEADO
                 if($infoUsuario->activo == 0){
                     return ['success' => 1];
                 }
 
-                // se verifica cuanto tiempo debe esperar el usuario para hacer un reintento de mensaje
+                // FECHA DEL SERVIDOR
                 $currentDate = Carbon::now('America/El_Salvador');
-                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->fechareintento);
 
-                if ($minutesPassed >= $retryAfterMinutes) {
-                    // Puedes reintentar enviar el mensaje
-                    $canRetry = true;
-                    $minutesToWait = 0;
-                } else {
-                    // Debes esperar más tiempo
-                    $canRetry = false;
-                    $minutesToWait = $this->convertirMinutosASegundos($retryAfterMinutes - $minutesPassed);
+                // DIFERENCIA EN SEGUNDOS ENTRE LA FECHA ACTUAL DEL SERVIDOR Y LA FECHA DEL ULTIMO INTENTO SMS
+                $secondsSinceLastAttempt = $currentDate->diffInSeconds($infoUsuario->fechareintento);
+
+                // VERIFICAR SI HAN PASADO AL MENOS X SEGUNDOS
+                $puedeReenviarSMS = 0;
+                $secondsToWait = 0;
+
+                if($secondsSinceLastAttempt >= $limiteSegundosSMS){
+                    $puedeReenviarSMS = 1;
+                }else{
+                    // CALCULAR EL TIEMPO RESTANTE (CRONOMETRO), SI AUN NO SE PUEDE REENVIAR SMS
+                    $secondsToWait = $limiteSegundosSMS - $secondsSinceLastAttempt;
                 }
 
+                // CERO, SE SETEA AL TIEMPO X DE ESPERA DE SEGUNDOS PARA EL CRONOMETRO EN LA APP
+                if($secondsToWait <= 0){
+                    $secondsToWait = $limiteSegundosSMS;
+                }
 
+                // YA SE PUEDE REENVIAR SMS Y SE HACE EL REENVIO, SE ACTUALIZA LA FECHA
+                if ($puedeReenviarSMS == 1) {
 
-                //******* AQUI SE ENVIA SMS ***********
+                    //******* AQUI SE ENVIA SMS ***********
 
-                if($canRetry){
                     $detaRe = new ReintentoSms();
                     $detaRe->id_usuarios = $infoUsuario->id;
                     $detaRe->fecha = $currentDate;
                     $detaRe->tipo = 1;
                     $detaRe->save();
 
-                    $codigo = '';
-                    for($i = 0; $i < 4; $i++) {
-                        $codigo .= mt_rand(0, 9);
-                    }
-
+                    // ACTUALIZAR LA FECHA DE REINTENTO SMS DEL USUARIO
                     Usuario::where('id', $infoUsuario->id)
                         ->update([
                             'codigo' => $codigo,
                             'fechareintento' => $currentDate
                         ]);
-
-                    // Enviar codigo SMS
                 }
 
-                //************************************
+                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
+                $secondsToWait = $secondsToWait * 1000;
 
-
-                // Enviar datos
                 DB::commit();
-                return ['success' => 2, 'canretry' => $canRetry, 'segundos' => $minutesToWait];
-
+                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
             } else {
 
-                // telefono no registrado, se debe registrar
+                // CUANDO EL TELEFONO A REGISTRAR ES NUEVO, SI ES UN NUMERO ERRONEO, NO GUARDARA NADA
+                // EN EXCEPCION DE ENVIO SMS
 
-                $codigo = '';
-                for($i = 0; $i < 4; $i++) {
-                    $codigo .= mt_rand(0, 9);
-                }
+
 
                 $currentDate = Carbon::now('America/El_Salvador');
 
                 $registro = new Usuario();
-                $registro->telefono = $request->telefono;
+                $registro->telefono = $telefono;
                 $registro->codigo = $codigo;
                 $registro->fecha = $currentDate;
                 $registro->fechareintento = $currentDate;
@@ -109,10 +114,6 @@ class ApiLoginController extends Controller
                 $registro->verificado = 0;
                 $registro->fecha_verificado = null;
                 $registro->save();
-
-                // Como es primera vez, se debera esperar 2 minutos para reintento en la App.
-                $canRetry = false;
-                $minutesToWait = 2;
 
 
                 //******* AQUI SE ENVIA SMS ***********
@@ -123,12 +124,12 @@ class ApiLoginController extends Controller
                 $detaRe->tipo = 2;
                 $detaRe->save();
 
-
                 //************************************
-
+                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
+                $limiteSegundosSMS = $limiteSegundosSMS * 1000;
 
                 DB::commit();
-                return ['success' => 2, 'canretry' => $canRetry, 'segundos' => $minutesToWait];
+                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -137,21 +138,13 @@ class ApiLoginController extends Controller
         }
     }
 
-    private function convertirMinutosASegundos($minutos)
-    {
-        return $minutos * 60;
-    }
-
-
 
     // SOLICITUD DE CODIGO DE CONFIRMACION
     public function reintentoSMS(Request $request){
 
         $rules = array(
             'telefono' => 'required',
-            'codigo' => 'required'
         );
-
 
         $validator = Validator::make($request->all(), $rules );
 
@@ -163,65 +156,68 @@ class ApiLoginController extends Controller
 
         try {
 
-            if($infoUsuario = Usuario::where('telefono', $request->telefono)->first()){
+            // SEGUNDOS A ESPERAR
+            $limiteSegundosSMS = 20;
+
+            $telefono = str_replace(' ', '', $request->telefono);
+
+            if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
 
                 // usuario inactivo
                 if($infoUsuario->activo == 0){
                     return ['success' => 1];
                 }
 
-                // Se verifica que el tiempo de espera es permitido
-                $retryAfterMinutes = 2;
-
+                // FECHA DEL SERVIDOR
                 $currentDate = Carbon::now('America/El_Salvador');
 
-                $minutesPassed = $currentDate->diffInMinutes($infoUsuario->fechareintento);
+                // DIFERENCIA EN SEGUNDOS ENTRE LA FECHA ACTUAL DEL SERVIDOR Y LA FECHA DEL ULTIMO INTENTO SMS
+                $secondsSinceLastAttempt = $currentDate->diffInSeconds($infoUsuario->fechareintento);
 
-                if ($minutesPassed >= $retryAfterMinutes) {
-                    // Puedes reintentar enviar el mensaje
-                    $canRetry = true;
-                    $minutesToWait = 0;
-                } else {
-                    // Debes esperar más tiempo
-                    $canRetry = false;
-                    $minutesToWait = $retryAfterMinutes - $minutesPassed;
+                // VERIFICAR SI HAN PASADO AL MENOS X SEGUNDOS
+                $puedeReenviarSMS = 0;
+                $secondsToWait = 0;
+
+                if($secondsSinceLastAttempt >= $limiteSegundosSMS){
+                    $puedeReenviarSMS = 1;
+                }else{
+                    // CALCULAR EL TIEMPO RESTANTE (CRONOMETRO), SI AUN NO SE PUEDE REENVIAR SMS
+                    $secondsToWait = $limiteSegundosSMS - $secondsSinceLastAttempt;
+                }
+
+                // CERO, SE SETEA AL TIEMPO X DE ESPERA DE SEGUNDOS PARA EL CRONOMETRO EN LA APP
+                if($secondsToWait <= 0){
+                    $secondsToWait = $limiteSegundosSMS;
                 }
 
 
                 //******* AQUI SE ENVIA SMS ***********
 
-                if($canRetry){
+                if ($puedeReenviarSMS) {
                     $detaRe = new ReintentoSms();
                     $detaRe->id_usuarios = $infoUsuario->id;
                     $detaRe->fecha = $currentDate;
                     $detaRe->tipo = 3;
                     $detaRe->save();
 
-                    $codigo = '';
-                    for($i = 0; $i < 4; $i++) {
-                        $codigo .= mt_rand(0, 9);
-                    }
-
                     Usuario::where('id', $infoUsuario->id)
                         ->update([
-                            'codigo' => $codigo,
                             'fechareintento' => $currentDate
                         ]);
 
-                    // Enviar SMS
+                    // ENVIAR SMS, SE TOMARA EL MISMO CODIGO, NO SE ACTUALIZARA AQUI
 
 
                 }
 
                 //************************************
+                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
+                $secondsToWait = $secondsToWait * 1000;
 
 
-
-
-
-
+                DB::commit();
                 // en la App se reinicia el cronometro a 2 minutos para poder reintentar
-                return ['success' => 2, 'canretry' => $canRetry, 'minutos' => $minutesToWait];
+                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
             }else{
 
                 // telefono no encontrado
@@ -256,8 +252,11 @@ class ApiLoginController extends Controller
 
         try {
 
-            if($infoUsuario = Usuario::where('telefono', $request->telefono)
-                ->where('codigo', $request->codigo)
+            $telefono = str_replace(' ', '', $request->telefono);
+            $codigo = str_replace(' ', '', $request->codigo);
+
+            if($infoUsuario = Usuario::where('telefono', $telefono)
+                ->where('codigo', $codigo)
                 ->first()){
 
                 // usuario inactivo
@@ -293,7 +292,7 @@ class ApiLoginController extends Controller
                 }
 
                 DB::commit();
-                return ['success' => 2, 'token' => $token];
+                return ['success' => 2, 'token' => $token, 'id' => strval($infoUsuario->id)];
             }else{
                 // codigo incorrecto
                 return ['success' => 3];
@@ -304,5 +303,7 @@ class ApiLoginController extends Controller
             return ['success' => 99];
         }
     }
+
+
 
 }
