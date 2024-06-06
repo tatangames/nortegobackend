@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\Perfil\PerfilController;
 use App\Http\Controllers\Backend\Roles\PermisoController;
 use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Backend\Configuracion\Estadisticas\EstadisticasAdminController;
+use App\Http\Controllers\Backend\Configuracion\Slider\SliderController;
 
 
 /*
@@ -53,5 +54,35 @@ Route::get('/admin/editar-perfil/index', [PerfilController::class,'indexEditarPe
 Route::post('/admin/editar-perfil/actualizar', [PerfilController::class, 'editarUsuario']);
 
 
+// --- ESTADISTICAS ---
 Route::get('/admin/estadisticas/administrador', [EstadisticasAdminController::class,'indexEstadisticaAdmin'])->name('admin.estadisticas.administrador');
+
+// --- SLIDER ---
+Route::get('/admin/slider/index', [SliderController::class,'indexSlider'])->name('admin.slider.editor');
+Route::get('/admin/slider/tabla', [SliderController::class,'tablaSlider']);
+Route::post('/admin/slider/nuevo', [SliderController::class, 'nuevoSlider']);
+Route::post('/admin/slider/informacion', [SliderController::class, 'informacionSlider']);
+Route::post('/admin/slider/posicion', [SliderController::class, 'actualizarPosicionSlider']);
+Route::post('/admin/slider/editar', [SliderController::class, 'editarSlider']);
+Route::post('/admin/slider/borrar', [SliderController::class, 'borrarSlider']);
+
+// --- SERVICIOS ---
+Route::get('/admin/servicios/index', [SliderController::class,'indexServicios'])->name('admin.servicios.editor');
+Route::get('/admin/servicios/tabla', [SliderController::class,'tablaServicios']);
+Route::post('/admin/servicios/nuevo', [SliderController::class, 'nuevoServicios']);
+Route::post('/admin/servicios/informacion', [SliderController::class, 'informacionServicios']);
+Route::post('/admin/servicios/posicion', [SliderController::class, 'actualizarPosicionServicios']);
+Route::post('/admin/servicios/editar', [SliderController::class, 'editarServicios']);
+Route::post('/admin/servicios/borrar', [SliderController::class, 'borrarServicios']);
+
+
+
+
+
+
+
+
+
+
+
 
