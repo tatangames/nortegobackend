@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('servicio', function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('id_tiposervicio')->unsigned();
             $table->string('nombre', 50);
             $table->string('imagen', 100);
             $table->boolean('activo');
             $table->integer('posicion');
+
+            $table->foreign('id_tiposervicio')->references('id')->on('tiposervicio');
         });
     }
 

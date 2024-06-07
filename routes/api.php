@@ -22,7 +22,7 @@ Route::post('app/verificarcodigo/telefono', [ApiLoginController::class,'verifica
 Route::middleware('verificarToken')->group(function () {
 
     // --- PANTALLA PRINCIPAL
-    Route::get('app/principal/listado', [ApiPrincipalController::class,'listadoPrincipal']);
+    Route::post('app/principal/listado', [ApiPrincipalController::class,'listadoPrincipal']);
 
 });
 

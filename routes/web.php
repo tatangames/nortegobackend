@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\Roles\PermisoController;
 use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Backend\Configuracion\Estadisticas\EstadisticasAdminController;
 use App\Http\Controllers\Backend\Configuracion\Slider\SliderController;
+use App\Http\Controllers\Backend\Configuracion\Usuario\UsuarioController;
 
 
 /*
@@ -75,6 +76,14 @@ Route::post('/admin/servicios/posicion', [SliderController::class, 'actualizarPo
 Route::post('/admin/servicios/editar', [SliderController::class, 'editarServicios']);
 Route::post('/admin/servicios/borrar', [SliderController::class, 'borrarServicios']);
 
+// --- USUARIOS ---
+Route::get('/admin/usuarios/index', [UsuarioController::class,'indexUsuario'])->name('admin.usuarios.admin');
+Route::get('/admin/usuarios/tabla', [UsuarioController::class,'tablaUsuario']);
+Route::post('/admin/usuarios/informacion', [UsuarioController::class, 'informacionUsuario']);
+Route::post('/admin/usuarios/editar', [UsuarioController::class, 'editarUsuario']);
+
+Route::get('/admin/usuarios/sms/index/{id}', [UsuarioController::class,'indexSMSEnviados']);
+Route::get('/admin/usuarios/sms/tabla/{id}', [UsuarioController::class,'tablaSMSEnviados']);
 
 
 

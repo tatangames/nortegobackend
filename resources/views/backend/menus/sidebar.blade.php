@@ -35,6 +35,13 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.usuarios.admin') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Usuarios</p>
+                            </a>
+                        </li>
+
                     </ul>
                  </li>
 
@@ -43,26 +50,29 @@
                 @can('sidebar.estadisticas.administrador')
 
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.estadisticas.administrador') }}" target="frameprincipal" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Estadísticas</p>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.estadisticas.administrador') }}" target="frameprincipal" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Estadísticas</p>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.slider.editor') }}" target="frameprincipal" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Slider</p>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.slider.editor') }}" target="frameprincipal" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Slider</p>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.servicios.editor') }}" target="frameprincipal" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Servicios</p>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.servicios.editor') }}" target="frameprincipal" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Servicios</p>
+                        </a>
+                    </li>
+
+
+
 
                 @endcan
             </ul>

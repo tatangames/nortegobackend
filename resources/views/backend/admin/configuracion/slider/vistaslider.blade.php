@@ -75,7 +75,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Imagen (Ejemplo 1920x1080)</label>
+                                        <label>Imagen (Ejemplo 1920x1080 px)</label>
                                         <div class="col-md-10">
                                             <input type="file" style="color:#191818" id="imagen-nuevo" accept="image/jpeg, image/jpg, image/png" />
                                         </div>
@@ -133,7 +133,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Imagen (Ejemplo 1920x1080)</label>
+                                        <label>Imagen (Ejemplo 1920x1080 px)</label>
                                         <div class="col-md-10">
                                             <input type="file" style="color:#191818" id="imagen-editar" accept="image/jpeg, image/jpg, image/png" />
                                         </div>
