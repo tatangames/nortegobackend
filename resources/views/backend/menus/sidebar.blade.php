@@ -65,6 +65,13 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{{ route('admin.tiposervicios.editor') }}" target="frameprincipal" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Tipo de Servicios</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="{{ route('admin.servicios.editor') }}" target="frameprincipal" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Servicios</p>

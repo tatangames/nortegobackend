@@ -28,7 +28,7 @@
 
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item">Servicios</li>
+                    <li class="breadcrumb-item">Tipo de Servicios</li>
                     <li class="breadcrumb-item active">Listado</li>
                 </ol>
             </div>
@@ -71,34 +71,9 @@
 
 
                                     <div class="form-group">
-                                        <label class="control-label">Tipo Servicio</label>
-                                        <select class="form-control" id="select-tiposervicio-nuevo">
-                                            @foreach($arrayTipoServicio as $item)
-                                                <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-
-                                    <div class="form-group">
                                         <label>Nombre</label>
-                                        <input style="color:#191818" autocomplete="off" type="text" id="nombre-nuevo" class="form-control" maxlength="200" />
+                                        <input style="color:#191818" autocomplete="off" type="text" id="nombre-nuevo" class="form-control" maxlength="50" />
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>Descripción (Opcional)</label>
-                                        <input style="color:#191818"  autocomplete="off" type="text" id="descripcion-nuevo" class="form-control" maxlength="200" />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Imagen (Ejemplo 600px X -)</label>
-                                        <div class="col-md-10">
-                                            <input type="file" style="color:#191818" id="imagen-nuevo" accept="image/jpeg, image/jpg, image/png" />
-                                        </div>
-                                    </div>
-
-
-
 
 
                                 </div>
@@ -136,22 +111,8 @@
 
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input style="color:#191818" type="text" autocomplete="off" id="nombre-editar" class="form-control" maxlength="200" />
+                                        <input style="color:#191818" type="text" autocomplete="off" id="nombre-editar" class="form-control" maxlength="50" />
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>Descripción (Opcional)</label>
-                                        <input style="color:#191818" autocomplete="off" type="text" id="descripcion-editar" class="form-control" maxlength="200" />
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label class="control-label">Tipo Servicio</label>
-                                        <select class="form-control" id="select-tiposervicio-editar">
-
-                                        </select>
-                                    </div>
-
 
 
                                     <div class="form-group">
@@ -166,12 +127,6 @@
                                         </label>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label>Imagen (Ejemplo 600px X -)</label>
-                                        <div class="col-md-10">
-                                            <input type="file" style="color:#191818" id="imagen-editar" accept="image/jpeg, image/jpg, image/png" />
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +158,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/servicios/tabla') }}";
+            var ruta = "{{ URL::to('/admin/tiposervicios/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -213,7 +168,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/servicios/tabla') }}";
+            var ruta = "{{ URL::to('/admin/tiposervicios/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -224,33 +179,18 @@
 
         function nuevoRegistro(){
             var nombre = document.getElementById('nombre-nuevo').value;
-            var descripcion = document.getElementById('descripcion-nuevo').value;
-            var idtiposervicio = document.getElementById('select-tiposervicio-nuevo').value;
-            var imagen = document.getElementById("imagen-nuevo");
 
             if(nombre === ''){
                 toastr.error('Nombre es requerido')
                 return;
             }
 
-            if(imagen.files && imagen.files[0]){ // si trae imagen
-                if (!imagen.files[0].type.match('image/jpeg|image/jpeg|image/png')){
-                    toastr.error('Formato de imagen permitido: .png .jpg .jpeg');
-                    return;
-                }
-            }else{
-                toastr.error('Imagen es Requerida')
-                return;
-            }
 
             openLoading();
             var formData = new FormData();
             formData.append('nombre', nombre);
-            formData.append('descripcion', descripcion);
-            formData.append('idtiposervicio', idtiposervicio);
-            formData.append('imagen', imagen.files[0]);
 
-            axios.post('/admin/servicios/nuevo', formData, {
+            axios.post('/admin/tiposervicios/nuevo', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -273,7 +213,7 @@
             openLoading();
             document.getElementById("formulario-editar").reset();
 
-            axios.post('/admin/servicios/informacion',{
+            axios.post('/admin/tiposervicios/informacion',{
                 'id': id
             })
                 .then((response) => {
@@ -282,23 +222,12 @@
                         $('#modalEditar').modal('show');
                         $('#id-editar').val(id);
                         $('#nombre-editar').val(response.data.info.nombre);
-                        $('#descripcion-editar').val(response.data.info.descripcion);
 
                         if(response.data.info.activo === 1){
                             $("#toggle").prop("checked", true);
                         }else{
                             $("#toggle").prop("checked", false);
                         }
-
-                        document.getElementById("select-tiposervicio-editar").options.length = 0;
-
-                        $.each(response.data.arraylista, function( key, val ){
-                            if(response.data.info.id_tiposervicio == val.id){
-                                $('#select-tiposervicio-editar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
-                            }else{
-                                $('#select-tiposervicio-editar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
-                            }
-                        });
 
                     }else{
                         toastr.error('Información no encontrada');
@@ -315,9 +244,6 @@
         function editarRegistro(){
             var id = document.getElementById('id-editar').value;
             var nombre = document.getElementById('nombre-editar').value;
-            var descripcion = document.getElementById('descripcion-editar').value;
-            var idtipoServicio = document.getElementById('select-tiposervicio-editar').value;
-            var imagen = document.getElementById("imagen-editar");
             let t = document.getElementById('toggle').checked;
             let toggle = t ? 1 : 0;
 
@@ -326,23 +252,14 @@
                 return;
             }
 
-            if(imagen.files && imagen.files[0]){ // si trae imagen
-                if (!imagen.files[0].type.match('image/jpeg|image/jpeg|image/png')){
-                    toastr.error('Formato de imagen permitido: .png .jpg .jpeg');
-                    return;
-                }
-            }
 
             openLoading();
             var formData = new FormData();
             formData.append('id', id);
             formData.append('nombre', nombre);
-            formData.append('descripcion', descripcion);
-            formData.append('idtiposervicio', idtipoServicio);
             formData.append('toggle', toggle);
-            formData.append('imagen', imagen.files[0]);
 
-            axios.post('/admin/servicios/editar', formData, {
+            axios.post('/admin/tiposervicios/editar', formData, {
             })
                 .then((response) => {
                     closeLoading();

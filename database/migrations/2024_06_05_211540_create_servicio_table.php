@@ -17,8 +17,11 @@ return new class extends Migration
             $table->bigInteger('id_tiposervicio')->unsigned();
             $table->string('nombre', 50);
             $table->string('imagen', 100);
+            $table->string('descripcion', 200)->nullable();
             $table->boolean('activo');
             $table->integer('posicion');
+
+
 
             $table->foreign('id_tiposervicio')->references('id')->on('tiposervicio');
         });

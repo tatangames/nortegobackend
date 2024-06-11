@@ -24,6 +24,12 @@ Route::middleware('verificarToken')->group(function () {
     // --- PANTALLA PRINCIPAL
     Route::post('app/principal/listado', [ApiPrincipalController::class,'listadoPrincipal']);
 
+
+    // --- ENVIO DE SERVICIO BASICO ---
+    Route::post('app/servicios/basicos/registrar', [ApiPrincipalController::class,'registrarServicioBasico']);
+
+
+
 });
 
 

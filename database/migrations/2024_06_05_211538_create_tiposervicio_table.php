@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('tiposervicio', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 50);
+            $table->integer('posicion');
+            $table->boolean('activo');
         });
     }
 

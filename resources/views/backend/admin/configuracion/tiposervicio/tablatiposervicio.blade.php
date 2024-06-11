@@ -9,9 +9,7 @@
                         <tr>
                             <th>Posición</th>
                             <th>Nombre</th>
-                            <th>Descripción</th>
                             <th>Estado</th>
-                            <th>Imagen</th>
 
                             <th>Opciones</th>
                         </tr>
@@ -22,7 +20,7 @@
 
                                 <td>{{ $dato->posicion }}</td>
                                 <td>{{ $dato->nombre }}</td>
-                                <td>{{ $dato->descripcion }}</td>
+
                                 <td>
                                     @if($dato->activo == 1)
                                         <span class="badge bg-success">Activo</span>
@@ -32,14 +30,9 @@
                                 </td>
 
                                 <td>
-                                    <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="75px" height="75px" /></center>
-                                </td>
-                                <td>
                                     <button type="button" class="btn btn-success btn-xs" onclick="informacion({{ $dato->id }})">
                                         <i class="fas fa-eye" title="Información"></i>&nbsp; Información
                                     </button>
-
-
                                 </td>
 
                             </tr>
@@ -76,7 +69,7 @@
 
             openLoading();
 
-            axios.post('/admin/servicios/posicion',  {
+            axios.post('/admin/tiposervicios/posicion',  {
                 'order': order
             })
                 .then((response) => {

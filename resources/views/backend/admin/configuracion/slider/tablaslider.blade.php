@@ -30,7 +30,7 @@
                                 </td>
 
                                 <td>
-                                    <center><img alt="comascosv" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="75px" height="75px" /></center>
+                                    <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="75px" height="75px" /></center>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-xs" onclick="informacion({{ $dato->id }})">

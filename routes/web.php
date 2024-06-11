@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Backend\Configuracion\Estadisticas\EstadisticasAdminController;
 use App\Http\Controllers\Backend\Configuracion\Slider\SliderController;
 use App\Http\Controllers\Backend\Configuracion\Usuario\UsuarioController;
+use App\Http\Controllers\Backend\Configuracion\Servicios\ServiciosController;
 
 
 /*
@@ -67,14 +68,27 @@ Route::post('/admin/slider/posicion', [SliderController::class, 'actualizarPosic
 Route::post('/admin/slider/editar', [SliderController::class, 'editarSlider']);
 Route::post('/admin/slider/borrar', [SliderController::class, 'borrarSlider']);
 
+// --- TIPO DE SERVICIOS ---
+Route::get('/admin/tiposervicios/index', [ServiciosController::class,'indexTipoServicios'])->name('admin.tiposervicios.editor');
+Route::get('/admin/tiposervicios/tabla', [ServiciosController::class,'tablaTipoServicios']);
+Route::post('/admin/tiposervicios/nuevo', [ServiciosController::class, 'nuevoTipoServicios']);
+Route::post('/admin/tiposervicios/informacion', [ServiciosController::class, 'informacionTipoServicios']);
+Route::post('/admin/tiposervicios/posicion', [ServiciosController::class, 'actualizarPosicionTipoServicios']);
+Route::post('/admin/tiposervicios/editar', [ServiciosController::class, 'editarTipoServicios']);
+
+
+
 // --- SERVICIOS ---
-Route::get('/admin/servicios/index', [SliderController::class,'indexServicios'])->name('admin.servicios.editor');
-Route::get('/admin/servicios/tabla', [SliderController::class,'tablaServicios']);
-Route::post('/admin/servicios/nuevo', [SliderController::class, 'nuevoServicios']);
-Route::post('/admin/servicios/informacion', [SliderController::class, 'informacionServicios']);
-Route::post('/admin/servicios/posicion', [SliderController::class, 'actualizarPosicionServicios']);
-Route::post('/admin/servicios/editar', [SliderController::class, 'editarServicios']);
-Route::post('/admin/servicios/borrar', [SliderController::class, 'borrarServicios']);
+Route::get('/admin/servicios/index', [ServiciosController::class,'indexServicios'])->name('admin.servicios.editor');
+Route::get('/admin/servicios/tabla', [ServiciosController::class,'tablaServicios']);
+Route::post('/admin/servicios/nuevo', [ServiciosController::class, 'nuevoServicios']);
+Route::post('/admin/servicios/informacion', [ServiciosController::class, 'informacionServicios']);
+Route::post('/admin/servicios/posicion', [ServiciosController::class, 'actualizarPosicionServicios']);
+Route::post('/admin/servicios/editar', [ServiciosController::class, 'editarServicios']);
+
+
+
+
 
 // --- USUARIOS ---
 Route::get('/admin/usuarios/index', [UsuarioController::class,'indexUsuario'])->name('admin.usuarios.admin');
