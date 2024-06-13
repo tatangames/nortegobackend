@@ -20,16 +20,21 @@
     <section class="content-header">
         <div class="row mb-2">
             <div class="col-sm-6">
-
+                <div class="form-group" style="width: 25%">
+                    <label>Cronometro</label>
+                    <label id="contador"></label>
+                </div>
             </div>
 
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Alumbrado Eléctrico</li>
+                    <li class="breadcrumb-item active">Desechos</li>
                 </ol>
             </div>
         </div>
+
+
 
         <button type="button" style="margin: 10px" onclick="checkReporte()" class="btn btn-primary btn-sm">
             <i class="fas fa-plus-square"></i>
@@ -42,7 +47,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Alumbrado Eléctrico Finalizadas</h3>
+                    <h3 class="card-title">Listado Desechos Activas</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -55,7 +60,6 @@
             </div>
         </div>
     </section>
-
 
 </div>
 
@@ -74,9 +78,10 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/solicitud/alumbradofinalizada/tabla') }}";
+            var ruta = "{{ URL::to('/admin/solicitud/desechos/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
+            countdown();
             document.getElementById("divcontenedor").style.display = "block";
         });
     </script>
@@ -84,7 +89,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/solicitud/alumbradofinalizada/tabla') }}";
+            var ruta = "{{ URL::to('/admin/solicitud/desechos/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -106,6 +111,49 @@
         }
 
 
+        function modalFinalizar(id){
+
+            Swal.fire({
+                title: 'Finalizar',
+                text: "",
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Si'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    finalizarSolicitud(id);
+                }
+            })
+        }
+
+
+        function finalizarSolicitud(id){
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+
+            axios.post('/admin/solicitud/desechos/finalizar', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+                        toastr.success('Finalizado');
+                        recargar();
+                    }
+                    else {
+                        toastr.error('Error al finalizar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al finalizar');
+                    closeLoading();
+                });
+        }
+
 
         function checkReporte(){
 
@@ -118,9 +166,11 @@
                 return;
             }
 
+            console.log('pass');
+
             tableRows.forEach(function(row) {
                 var checkbox = row.querySelector('.checkbox');
-                if(checkbox != null) {
+                if(checkbox != null){
                     if (checkbox.checked) {
                         var dataInfo = row.getAttribute('data-info');
                         selected.push(dataInfo);
@@ -136,7 +186,7 @@
             let listado = selected.toString();
             let reemplazo = listado.replace(/,/g, "-");
 
-            window.open("{{ URL::to('admin/solicitud/alumbrado/reportevarios') }}/" + reemplazo);
+            window.open("{{ URL::to('admin/solicitud/desechos/reportevarios') }}/" + reemplazo);
         }
 
         function vistaMapa(id){

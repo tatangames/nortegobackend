@@ -203,7 +203,8 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/servicios/tabla') }}";
+            let id = {{ $idtiposervicio }};
+            var ruta = "{{ URL::to('/admin/servicios/tabla') }}/" + id;
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";

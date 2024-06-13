@@ -26,10 +26,12 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Alumbrado Eléctrico</li>
+                    <li class="breadcrumb-item active">Desechos</li>
                 </ol>
             </div>
         </div>
+
+
 
         <button type="button" style="margin: 10px" onclick="checkReporte()" class="btn btn-primary btn-sm">
             <i class="fas fa-plus-square"></i>
@@ -42,7 +44,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Alumbrado Eléctrico Finalizadas</h3>
+                    <h3 class="card-title">Listado Desechos Finalizadas</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -74,7 +76,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/solicitud/alumbradofinalizada/tabla') }}";
+            var ruta = "{{ URL::to('/admin/solicitud/desechosfinalizada/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -84,7 +86,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/solicitud/alumbradofinalizada/tabla') }}";
+            var ruta = "{{ URL::to('/admin/solicitud/desechosfinalizada/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -136,7 +138,7 @@
             let listado = selected.toString();
             let reemplazo = listado.replace(/,/g, "-");
 
-            window.open("{{ URL::to('admin/solicitud/alumbrado/reportevarios') }}/" + reemplazo);
+            window.open("{{ URL::to('admin/solicitud/desechos/reportevarios') }}/" + reemplazo);
         }
 
         function vistaMapa(id){

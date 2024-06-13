@@ -78,8 +78,8 @@ Route::post('/admin/tiposervicios/posicion', [ServiciosController::class, 'actua
 Route::post('/admin/tiposervicios/editar', [ServiciosController::class, 'editarTipoServicios']);
 
 // --- SERVICIOS ---
-Route::get('/admin/servicios/index', [ServiciosController::class,'indexServicios'])->name('admin.servicios.editor');
-Route::get('/admin/servicios/tabla', [ServiciosController::class,'tablaServicios']);
+Route::get('/admin/servicios/index/{idtiposervicio}', [ServiciosController::class,'indexServicios']);
+Route::get('/admin/servicios/tabla/{idtiposervicio}', [ServiciosController::class,'tablaServicios']);
 Route::post('/admin/servicios/nuevo', [ServiciosController::class, 'nuevoServicios']);
 Route::post('/admin/servicios/informacion', [ServiciosController::class, 'informacionServicios']);
 Route::post('/admin/servicios/posicion', [ServiciosController::class, 'actualizarPosicionServicios']);
@@ -118,6 +118,17 @@ Route::get('/admin/solicitud/alumbrado/reportevarios/{listado}', [SolicitudUsuar
 // --- SOLICITUDES DE ALUMBRADO ELECTRICO - FINALIZADA ---
 Route::get('/admin/solicitud/alumbradofinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudAlumbradoFinalizada'])->name('admin.solicitud.alumbrado.finalizada.index');
 Route::get('/admin/solicitud/alumbradofinalizada/tabla', [SolicitudUsuarioController::class,'tablaSolicitudAlumbradoFinalizada']);
+
+
+// --- SOLICITUDES DE DESECHOS SOLIDOS - ACTIVAS ---
+Route::get('/admin/solicitud/desechos/index', [SolicitudUsuarioController::class,'indexSolicitudDesechos'])->name('admin.solicitud.desechos.activa.index');
+Route::get('/admin/solicitud/desechos/tabla', [SolicitudUsuarioController::class,'tablaSolicitudDesechos']);
+Route::post('/admin/solicitud/desechos/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudDesechos']);
+Route::get('/admin/solicitud/desechos/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfAlumbradoDesechos']);
+
+// --- SOLICITUDES DE DESECHOS SOLIDOS - FINALIZADA ---
+Route::get('/admin/solicitud/desechosfinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudDesechosFinalizada'])->name('admin.solicitud.desechos.finalizada.index');
+Route::get('/admin/solicitud/desechosfinalizada/tabla', [SolicitudUsuarioController::class,'tablaSolicitudDesechosFinalizada']);
 
 
 

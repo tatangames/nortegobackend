@@ -33,6 +33,10 @@
                                     <button type="button" class="btn btn-success btn-xs" onclick="informacion({{ $dato->id }})">
                                         <i class="fas fa-eye" title="Información"></i>&nbsp; Información
                                     </button>
+
+                                    <button type="button" class="btn btn-info btn-xs" onclick="vistaServicios({{ $dato->id }})">
+                                        <i class="fas fa-list" title="Servicios"></i>&nbsp; Servicios
+                                    </button>
                                 </td>
 
                             </tr>

@@ -142,18 +142,22 @@ class ServiciosController extends Controller
     //************************** SERVICIOS *******************************
 
 
-    public function indexServicios(){
+    public function indexServicios($idtiposervicio){
 
         $arrayTipoServicio = TipoServicio::orderBy('nombre', 'ASC')->get();
 
-        return view('backend.admin.configuracion.servicios.vistaservicios', compact('arrayTipoServicio'));
+        return view('backend.admin.configuracion.tiposervicio.servicios.vistaservicios', compact('arrayTipoServicio',
+        'idtiposervicio'));
     }
 
 
-    public function tablaServicios(){
-        $listado = Servicios::orderBy('posicion', 'ASC')->get();
+    public function tablaServicios($idtiposervicio){
 
-        return view('backend.admin.configuracion.servicios.tablaservicios',compact('listado'));
+        $listado = Servicios::orderBy('posicion', 'ASC')
+            ->where('id_tiposervicio', $idtiposervicio)
+            ->get();
+
+        return view('backend.admin.configuracion.tiposervicio.servicios.tablaservicios',compact('listado'));
     }
 
 

@@ -71,14 +71,6 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.servicios.editor') }}" target="frameprincipal" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Servicios</p>
-                        </a>
-                    </li>
-
-
 
                     <li class="nav-item">
                         <a href="#" class="nav-link">
@@ -137,6 +129,34 @@
 
                         </ul>
                     </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="far fa-edit"></i>
+                                <p>
+                                    Desechos Sólidos
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.solicitud.desechos.activa.index') }}" target="frameprincipal" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Activas</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.solicitud.desechos.finalizada.index') }}" target="frameprincipal" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Finalizadas</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
 
 
 

@@ -122,9 +122,11 @@
 
             tableRows.forEach(function(row) {
                 var checkbox = row.querySelector('.checkbox');
-                if (checkbox.checked) {
-                    var dataInfo = row.getAttribute('data-info');
-                    selected.push(dataInfo);
+                if(checkbox != null) {
+                    if (checkbox.checked) {
+                        var dataInfo = row.getAttribute('data-info');
+                        selected.push(dataInfo);
+                    }
                 }
             });
 

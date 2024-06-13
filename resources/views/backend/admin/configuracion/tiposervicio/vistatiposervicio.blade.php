@@ -280,7 +280,9 @@
         }
 
 
-
+        function vistaServicios(id){
+            window.location.href="{{ url('/admin/servicios/index') }}/" + id;
+        }
 
 
 
