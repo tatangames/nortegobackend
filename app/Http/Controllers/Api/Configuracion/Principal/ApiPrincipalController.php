@@ -7,6 +7,7 @@ use App\Models\Informacion;
 use App\Models\NotaServicioBasico;
 use App\Models\Servicios;
 use App\Models\Slider;
+use App\Models\TipoServicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use GoogleMaps\GoogleMaps;
 
 
 
@@ -36,7 +37,6 @@ class ApiPrincipalController extends Controller
 
 
             $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
-            $arrayServicio = Servicios::where('activo', 1)->orderBy('posicion', 'ASC')->get();
             $infoApp = Informacion::where('id', 1)->first();
 
             // VERIFICAR QUE EL CODIGO DE COMPILACION - ANDROID
@@ -49,18 +49,36 @@ class ApiPrincipalController extends Controller
                 }
             }
 
+            $resultsBloque = array();
+            $index = 0;
+
+            $arrayTipoServicio = TipoServicio::orderBy('posicion', 'ASC')
+                ->where('activo', 1)
+                ->get();
+
+            foreach ($arrayTipoServicio as $secciones){
+                array_push($resultsBloque,$secciones);
+
+                $subSecciones = Servicios::where('id_tiposervicio', $secciones->id)
+                    ->where('activo', 1) // para inactivarlo solo para administrador
+                    ->orderBy('posicion', 'ASC')
+                    ->get();
+
+                $resultsBloque[$index]->lista = $subSecciones;
+                $index++;
+            }
+
 
             return ['success' => 2,
                 'codeandroid' => $newUpdateAndroid,
                 'slider' => $arraySlider,
-                'servicio' => $arrayServicio];
+                'tiposervicio' => $arrayTipoServicio];
         }
         else{
             // HAY ERROR AL OBTENER EL USUARIO.
             return ['success' => 99];
         }
     }
-
 
 
     public function registrarServicioBasico(Request $request){
@@ -81,6 +99,43 @@ class ApiPrincipalController extends Controller
         $tokenApi = $request->header('Authorization');
 
         if ($userToken = JWTAuth::user($tokenApi)) {
+
+            // *** VERIFICAR SI ES PERMITIDO DENTRO DEL RANGO ***
+
+           if($request->latitud != null && $request->longitud != null){
+
+               // DEL MISMO SERVICIO, QUE ESTAN ACTIVAS
+               $arrayNotaServicio = NotaServicioBasico::where('id_servicio', $request->idservicio)
+                    ->where('id_estado', 1)
+                   ->get();
+
+               // VERIFICAR COORDENADAS SI ESTAN DENTRO DEL MISMO RANGO
+
+               foreach ($arrayNotaServicio as $dato){
+
+                   $latitudeFrom = $dato->latitud;
+                   $longitudeFrom = $dato->longitud;
+                   $latitudeTo = $request->latitud;
+                   $longitudeTo = $request->longitud;
+
+                   // Verificar si están dentro del rango
+                   $isWithinRange = $this->isWithinRange($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo);
+
+                   // Conocer la distancia
+                   //'distance' => $this->haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
+
+
+                   if($isWithinRange){
+
+                       $titulo = "Nota";
+                       $mensaje = "Hay una Solicitud Pendiente en su Ubicación";
+
+                       return ['success' => 1, 'titulo' => $titulo, "mensaje" => $mensaje];
+                   }
+               }
+           }
+
+
 
             if ($request->hasFile('imagen')) {
 
@@ -110,10 +165,11 @@ class ApiPrincipalController extends Controller
                         $registro->latitud = $request->latitud;
                         $registro->longitud = $request->longitud;
                         $registro->fecha = $fechaHoy;
+                        $registro->id_estado = 1;
                         $registro->save();
 
                         DB::commit();
-                        return ['success' => 1];
+                        return ['success' => 2];
                     }catch(\Throwable $e){
                         Log::info("error" . $e);
                         DB::rollback();
@@ -133,6 +189,33 @@ class ApiPrincipalController extends Controller
     }
 
 
+    // ********* VERIFICACION DE COORDENADAS *********
+
+    private function isWithinRange($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $rangeInMeters = 20) {
+        $distance = $this->haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo);
+        return $distance <= $rangeInMeters;
+    }
+
+    private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000) {
+        // Convertir de grados a radianes
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+
+        // Diferencias
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        // Fórmula Haversine
+        $a = sin($latDelta / 2) * sin($latDelta / 2) +
+            cos($latFrom) * cos($latTo) *
+            sin($lonDelta / 2) * sin($lonDelta / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        // Distancia en metros
+        return $earthRadius * $c;
+    }
 
 
 

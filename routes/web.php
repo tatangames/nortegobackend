@@ -10,6 +10,7 @@ use App\Http\Controllers\Backend\Configuracion\Estadisticas\EstadisticasAdminCon
 use App\Http\Controllers\Backend\Configuracion\Slider\SliderController;
 use App\Http\Controllers\Backend\Configuracion\Usuario\UsuarioController;
 use App\Http\Controllers\Backend\Configuracion\Servicios\ServiciosController;
+use App\Http\Controllers\Backend\Solicitud\SolicitudUsuarioController;
 
 
 /*
@@ -76,8 +77,6 @@ Route::post('/admin/tiposervicios/informacion', [ServiciosController::class, 'in
 Route::post('/admin/tiposervicios/posicion', [ServiciosController::class, 'actualizarPosicionTipoServicios']);
 Route::post('/admin/tiposervicios/editar', [ServiciosController::class, 'editarTipoServicios']);
 
-
-
 // --- SERVICIOS ---
 Route::get('/admin/servicios/index', [ServiciosController::class,'indexServicios'])->name('admin.servicios.editor');
 Route::get('/admin/servicios/tabla', [ServiciosController::class,'tablaServicios']);
@@ -87,24 +86,38 @@ Route::post('/admin/servicios/posicion', [ServiciosController::class, 'actualiza
 Route::post('/admin/servicios/editar', [ServiciosController::class, 'editarServicios']);
 
 
-
-
-
 // --- USUARIOS ---
 Route::get('/admin/usuarios/index', [UsuarioController::class,'indexUsuario'])->name('admin.usuarios.admin');
 Route::get('/admin/usuarios/tabla', [UsuarioController::class,'tablaUsuario']);
 Route::post('/admin/usuarios/informacion', [UsuarioController::class, 'informacionUsuario']);
 Route::post('/admin/usuarios/editar', [UsuarioController::class, 'editarUsuario']);
-
 Route::get('/admin/usuarios/sms/index/{id}', [UsuarioController::class,'indexSMSEnviados']);
 Route::get('/admin/usuarios/sms/tabla/{id}', [UsuarioController::class,'tablaSMSEnviados']);
 
 
+// --- SOLICITUDES DE RED VIALES - ACTIVAS ---
+Route::get('/admin/solicitud/redvial/index', [SolicitudUsuarioController::class,'indexSolicitudRedVial'])->name('admin.solicitud.redvial.activa.index');
+Route::get('/admin/solicitud/redvial/tabla', [SolicitudUsuarioController::class,'tablaSolicitudRedVial']);
+Route::post('/admin/solicitud/basico/mapa', [SolicitudUsuarioController::class,'mapaSolicitudBasica']);
+Route::post('/admin/solicitud/redvial/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudRedVial']);
+Route::get('/admin/solicitud/redvial/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfRedVialVarios']);
 
 
+// --- SOLICITUDES DE RED VIALES - FINALIZADA ---
+Route::get('/admin/solicitud/redvialfinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudRedVialFinalizada'])->name('admin.solicitud.redvial.finalizada.index');
+Route::get('/admin/solicitud/redvialfinalizada/tabla', [SolicitudUsuarioController::class,'tablaSolicitudRedVialFinalizada']);
 
 
+// --- SOLICITUDES DE ALUMBRADO ELECTRICO - ACTIVAS ---
+Route::get('/admin/solicitud/alumbrado/index', [SolicitudUsuarioController::class,'indexSolicitudAlumbrado'])->name('admin.solicitud.alumbrado.activa.index');
+Route::get('/admin/solicitud/alumbrado/tabla', [SolicitudUsuarioController::class,'tablaSolicitudAlumbrado']);
+Route::post('/admin/solicitud/alumbrado/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudAlumbrado']);
+Route::get('/admin/solicitud/alumbrado/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfAlumbradoVarios']);
 
+
+// --- SOLICITUDES DE ALUMBRADO ELECTRICO - FINALIZADA ---
+Route::get('/admin/solicitud/alumbradofinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudAlumbradoFinalizada'])->name('admin.solicitud.alumbrado.finalizada.index');
+Route::get('/admin/solicitud/alumbradofinalizada/tabla', [SolicitudUsuarioController::class,'tablaSolicitudAlumbradoFinalizada']);
 
 
 

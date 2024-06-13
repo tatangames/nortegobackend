@@ -16,6 +16,8 @@ return new class extends Migration
 
             $table->bigInteger('id_usuario')->unsigned();
             $table->bigInteger('id_servicio')->unsigned();
+            $table->bigInteger('id_estado')->unsigned();
+
             $table->string('imagen', 100);
             $table->string('nota', 2000)->nullable();
             $table->string('latitud', 100)->nullable();
@@ -24,6 +26,7 @@ return new class extends Migration
 
             $table->foreign('id_usuario')->references('id')->on('usuarios');
             $table->foreign('id_servicio')->references('id')->on('servicio');
+            $table->foreign('id_estado')->references('id')->on('estado_basico');
         });
     }
 

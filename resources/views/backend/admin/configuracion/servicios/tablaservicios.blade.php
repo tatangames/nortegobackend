@@ -7,12 +7,12 @@
                     <table id="table" class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>Posición</th>
+                            <th>ID</th>
                             <th>Nombre</th>
                             <th>Descripción</th>
                             <th>Estado</th>
                             <th>Imagen</th>
-
+                            <th>Posición</th>
                             <th>Opciones</th>
                         </tr>
                         </thead>
@@ -20,7 +20,7 @@
                         @foreach($listado as $dato)
                             <tr class="row1" data-id="{{ $dato->id }}">
 
-                                <td>{{ $dato->posicion }}</td>
+                                <td>{{ $dato->id }}</td>
                                 <td>{{ $dato->nombre }}</td>
                                 <td>{{ $dato->descripcion }}</td>
                                 <td>
@@ -34,6 +34,7 @@
                                 <td>
                                     <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="75px" height="75px" /></center>
                                 </td>
+                                <td>{{ $dato->posicion }}</td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-xs" onclick="informacion({{ $dato->id }})">
                                         <i class="fas fa-eye" title="Información"></i>&nbsp; Información
