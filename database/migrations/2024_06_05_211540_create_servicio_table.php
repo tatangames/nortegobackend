@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('servicio', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('id_cateservicio')->unsigned();
 
-            $table->bigInteger('id_tiposervicio')->unsigned();
+            $table->integer('tiposervicio');
+
             $table->string('nombre', 50);
             $table->string('imagen', 100);
             $table->string('descripcion', 200)->nullable();
             $table->boolean('activo');
             $table->integer('posicion');
 
-
-
-            $table->foreign('id_tiposervicio')->references('id')->on('tiposervicio');
+            $table->foreign('id_cateservicio')->references('id')->on('categoria_servicio');
         });
     }
 

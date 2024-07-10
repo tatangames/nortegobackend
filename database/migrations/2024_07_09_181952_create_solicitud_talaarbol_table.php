@@ -7,26 +7,27 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * REGISTRO DE SERVICIOS BASICOS
+     * SOLICITUDES PARA UNA TALA DE ARBOL
      */
     public function up(): void
     {
-        Schema::create('nota_serviciobasico', function (Blueprint $table) {
+        Schema::create('solicitud_talaarbol', function (Blueprint $table) {
             $table->id();
 
             $table->bigInteger('id_usuario')->unsigned();
-            $table->bigInteger('id_servicio')->unsigned();
-            $table->bigInteger('id_estado')->unsigned();
 
+            $table->dateTime('fecha');
+            $table->string('nombre', 100);
+            $table->string('telefono', 15);
+            $table->string('direccion', 500);
             $table->string('imagen', 100);
-            $table->string('nota', 2000)->nullable();
+            $table->text('nota')->nullable();
+            $table->boolean('escrituras');
+
             $table->string('latitud', 100)->nullable();
             $table->string('longitud', 100)->nullable();
-            $table->dateTime('fecha');
 
             $table->foreign('id_usuario')->references('id')->on('usuarios');
-            $table->foreign('id_servicio')->references('id')->on('servicio');
-            $table->foreign('id_estado')->references('id')->on('estado_basico');
         });
     }
 
@@ -35,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nota_serviciobasico');
+        Schema::dropIfExists('solicitud_talaarbol');
     }
 };

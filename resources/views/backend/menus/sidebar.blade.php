@@ -47,7 +47,7 @@
 
                 @endcan
 
-                @can('sidebar.estadisticas.administrador')
+
 
 
                     <li class="nav-item">
@@ -67,7 +67,7 @@
                     <li class="nav-item">
                         <a href="{{ route('admin.tiposervicios.editor') }}" target="frameprincipal" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Tipo de Servicios</p>
+                            <p>Categoría Servicio</p>
                         </a>
                     </li>
 
@@ -160,7 +160,7 @@
 
 
 
-                @endcan
+
             </ul>
         </nav>
 

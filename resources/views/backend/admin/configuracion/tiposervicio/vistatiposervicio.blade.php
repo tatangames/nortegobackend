@@ -158,7 +158,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/tiposervicios/tabla') }}";
+            var ruta = "{{ URL::to('/admin/categoria/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -168,7 +168,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/tiposervicios/tabla') }}";
+            var ruta = "{{ URL::to('/admin/categoria/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -185,12 +185,11 @@
                 return;
             }
 
-
             openLoading();
             var formData = new FormData();
             formData.append('nombre', nombre);
 
-            axios.post('/admin/tiposervicios/nuevo', formData, {
+            axios.post('/admin/categoria/nuevo', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -213,7 +212,7 @@
             openLoading();
             document.getElementById("formulario-editar").reset();
 
-            axios.post('/admin/tiposervicios/informacion',{
+            axios.post('/admin/categoria/informacion',{
                 'id': id
             })
                 .then((response) => {
@@ -259,7 +258,7 @@
             formData.append('nombre', nombre);
             formData.append('toggle', toggle);
 
-            axios.post('/admin/tiposervicios/editar', formData, {
+            axios.post('/admin/categoria/editar', formData, {
             })
                 .then((response) => {
                     closeLoading();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Configuracion\Principal;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoriaServicio;
 use App\Models\Informacion;
 use App\Models\NotaServicioBasico;
 use App\Models\Servicios;
@@ -36,47 +37,60 @@ class ApiPrincipalController extends Controller
             }
 
 
-            $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
-            $infoApp = Informacion::where('id', 1)->first();
+            DB::beginTransaction();
 
-            // VERIFICAR QUE EL CODIGO DE COMPILACION - ANDROID
-            $newUpdateAndroid = 0;
-            // SI ES -1 LA APP NO PUDO OBTENER EL IDENTIFICADOR
-            if($request->codeapp != null && $request->codeapp != -1){
-                // COMPARAR VERSION
-                if($request->codeapp != $infoApp->code_android){
-                    $newUpdateAndroid = 1;
+            try {
+
+
+                $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
+                $infoApp = Informacion::where('id', 1)->first();
+
+                // VERIFICAR QUE EL CODIGO DE COMPILACION - ANDROID
+                $newUpdateAndroid = 0;
+                // SI ES -1 LA APP NO PUDO OBTENER EL IDENTIFICADOR
+                if($request->codeapp != null && $request->codeapp != -1){
+                    // COMPARAR VERSION
+                    if($request->codeapp != $infoApp->code_android){
+                        $newUpdateAndroid = 1;
+                    }
                 }
-            }
 
-            $resultsBloque = array();
-            $index = 0;
+                $resultsBloque = array();
+                $index = 0;
 
-            $arrayTipoServicio = TipoServicio::orderBy('posicion', 'ASC')
-                ->where('activo', 1)
-                ->get();
-
-            foreach ($arrayTipoServicio as $secciones){
-                array_push($resultsBloque,$secciones);
-
-                $subSecciones = Servicios::where('id_tiposervicio', $secciones->id)
-                    ->where('activo', 1) // para inactivarlo solo para administrador
-                    ->orderBy('posicion', 'ASC')
+                $arrayTipoServicio = CategoriaServicio::orderBy('posicion', 'ASC')
+                    ->where('activo', 1)
                     ->get();
 
-                $resultsBloque[$index]->lista = $subSecciones;
-                $index++;
+                foreach ($arrayTipoServicio as $secciones){
+                    array_push($resultsBloque,$secciones);
+
+                    $subSecciones = Servicios::where('id_cateservicio', $secciones->id)
+                        ->where('activo', 1) // para inactivarlo solo para administrador
+                        ->orderBy('posicion', 'ASC')
+                        ->get();
+
+                    $resultsBloque[$index]->lista = $subSecciones;
+                    $index++;
+                }
+
+
+
+                return ['success' => 2,
+                    'codeandroid' => $newUpdateAndroid,
+                    'slider' => $arraySlider,
+                    'tiposervicio' => $arrayTipoServicio];
+
+            }catch(\Throwable $e){
+                Log::info("error" . $e);
+                DB::rollback();
+                return ['success' => 99];
             }
-
-
-            return ['success' => 2,
-                'codeandroid' => $newUpdateAndroid,
-                'slider' => $arraySlider,
-                'tiposervicio' => $arrayTipoServicio];
         }
         else{
             // HAY ERROR AL OBTENER EL USUARIO.
-            return ['success' => 99];
+            return ['success' => 99,
+                'msg' => 'No hay token'];
         }
     }
 

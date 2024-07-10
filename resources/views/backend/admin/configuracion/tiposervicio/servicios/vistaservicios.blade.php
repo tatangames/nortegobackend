@@ -71,11 +71,10 @@
 
 
                                     <div class="form-group">
-                                        <label class="control-label">Tipo Servicio</label>
+                                        <label class="control-label"></label>
                                         <select class="form-control" id="select-tiposervicio-nuevo">
-                                            @foreach($arrayTipoServicio as $item)
-                                                <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                            @endforeach
+                                            <option value="1">Servicios Basicos</option>
+                                            <option value="2">Tala de Arboles</option>
                                         </select>
                                     </div>
 
@@ -96,9 +95,6 @@
                                             <input type="file" style="color:#191818" id="imagen-nuevo" accept="image/jpeg, image/jpg, image/png" />
                                         </div>
                                     </div>
-
-
-
 
 
                                 </div>
@@ -146,13 +142,19 @@
 
 
                                     <div class="form-group">
-                                        <label class="control-label">Tipo Servicio</label>
+                                        <label class="control-label">Tipo de Pantalla</label>
                                         <select class="form-control" id="select-tiposervicio-editar">
-
+                                            <option value="1">Servicios Basicos</option>
+                                            <option value="2">Tala de Arboles</option>
                                         </select>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label class="control-label">Categoría</label>
+                                        <select class="form-control" id="select-categoria-editar">
 
+                                        </select>
+                                    </div>
 
                                     <div class="form-group">
                                         <label>Estado</label>
@@ -172,6 +174,7 @@
                                             <input type="file" style="color:#191818" id="imagen-editar" accept="image/jpeg, image/jpg, image/png" />
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -203,7 +206,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            let id = {{ $idtiposervicio }};
+            let id = {{ $idcategoria }};
             var ruta = "{{ URL::to('/admin/servicios/tabla') }}/" + id;
             $('#tablaDatatable').load(ruta);
 
@@ -214,7 +217,8 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/servicios/tabla') }}";
+            let id = {{ $idcategoria }};
+            var ruta = "{{ URL::to('/admin/servicios/tabla') }}/" + id;
             $('#tablaDatatable').load(ruta);
         }
 
@@ -244,11 +248,15 @@
                 return;
             }
 
+            let idcategoria = {{ $idcategoria }};
+
             openLoading();
             var formData = new FormData();
             formData.append('nombre', nombre);
             formData.append('descripcion', descripcion);
             formData.append('idtiposervicio', idtiposervicio);
+            formData.append('id_cateservicio', idcategoria);
+
             formData.append('imagen', imagen.files[0]);
 
             axios.post('/admin/servicios/nuevo', formData, {
@@ -291,15 +299,30 @@
                             $("#toggle").prop("checked", false);
                         }
 
-                        document.getElementById("select-tiposervicio-editar").options.length = 0;
+                        // MOVER EL SELECT AL TIPO DE SERVICIO
 
-                        $.each(response.data.arraylista, function( key, val ){
-                            if(response.data.info.id_tiposervicio == val.id){
-                                $('#select-tiposervicio-editar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
-                            }else{
-                                $('#select-tiposervicio-editar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
-                            }
-                        });
+                        let idpos = response.data.info.tiposervicio;
+                        let miSelect = document.getElementById('select-tiposervicio-editar');
+
+                        if(idpos === 1){
+                            miSelect.options.selectedIndex = 0;
+                        }
+                        else if(idpos === 2){
+                            miSelect.options.selectedIndex = 1;
+                        }
+
+
+
+                        document.getElementById("select-categoria-editar").options.length = 0;
+
+                       $.each(response.data.arrayCategorias, function( key, val ){
+                           if(response.data.info.id_cateservicio  == val.id){
+                               $('#select-categoria-editar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                           }else{
+                               $('#select-categoria-editar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                           }
+                       });
+
 
                     }else{
                         toastr.error('Información no encontrada');
@@ -317,7 +340,8 @@
             var id = document.getElementById('id-editar').value;
             var nombre = document.getElementById('nombre-editar').value;
             var descripcion = document.getElementById('descripcion-editar').value;
-            var idtipoServicio = document.getElementById('select-tiposervicio-editar').value;
+            var idCategoria = document.getElementById('select-categoria-editar').value;
+            var idtipo = document.getElementById('select-tiposervicio-editar').value;
             var imagen = document.getElementById("imagen-editar");
             let t = document.getElementById('toggle').checked;
             let toggle = t ? 1 : 0;
@@ -339,7 +363,8 @@
             formData.append('id', id);
             formData.append('nombre', nombre);
             formData.append('descripcion', descripcion);
-            formData.append('idtiposervicio', idtipoServicio);
+            formData.append('idcategoria', idCategoria);
+            formData.append('idtipo', idtipo);
             formData.append('toggle', toggle);
             formData.append('imagen', imagen.files[0]);
 

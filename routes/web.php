@@ -69,17 +69,17 @@ Route::post('/admin/slider/posicion', [SliderController::class, 'actualizarPosic
 Route::post('/admin/slider/editar', [SliderController::class, 'editarSlider']);
 Route::post('/admin/slider/borrar', [SliderController::class, 'borrarSlider']);
 
-// --- TIPO DE SERVICIOS ---
-Route::get('/admin/tiposervicios/index', [ServiciosController::class,'indexTipoServicios'])->name('admin.tiposervicios.editor');
-Route::get('/admin/tiposervicios/tabla', [ServiciosController::class,'tablaTipoServicios']);
-Route::post('/admin/tiposervicios/nuevo', [ServiciosController::class, 'nuevoTipoServicios']);
-Route::post('/admin/tiposervicios/informacion', [ServiciosController::class, 'informacionTipoServicios']);
-Route::post('/admin/tiposervicios/posicion', [ServiciosController::class, 'actualizarPosicionTipoServicios']);
-Route::post('/admin/tiposervicios/editar', [ServiciosController::class, 'editarTipoServicios']);
+// --- CATEGORIA DE SERVICIOS ---
+Route::get('/admin/categoria/index', [ServiciosController::class,'indexTipoServicios'])->name('admin.tiposervicios.editor');
+Route::get('/admin/categoria/tabla', [ServiciosController::class,'tablaTipoServicios']);
+Route::post('/admin/categoria/nuevo', [ServiciosController::class, 'nuevoTipoServicios']);
+Route::post('/admin/categoria/informacion', [ServiciosController::class, 'informacionTipoServicios']);
+Route::post('/admin/categoria/posicion', [ServiciosController::class, 'actualizarPosicionTipoServicios']);
+Route::post('/admin/categoria/editar', [ServiciosController::class, 'editarTipoServicios']);
 
 // --- SERVICIOS ---
-Route::get('/admin/servicios/index/{idtiposervicio}', [ServiciosController::class,'indexServicios']);
-Route::get('/admin/servicios/tabla/{idtiposervicio}', [ServiciosController::class,'tablaServicios']);
+Route::get('/admin/servicios/index/{idcategoria}', [ServiciosController::class,'indexServicios']);
+Route::get('/admin/servicios/tabla/{idcategoria}', [ServiciosController::class,'tablaServicios']);
 Route::post('/admin/servicios/nuevo', [ServiciosController::class, 'nuevoServicios']);
 Route::post('/admin/servicios/informacion', [ServiciosController::class, 'informacionServicios']);
 Route::post('/admin/servicios/posicion', [ServiciosController::class, 'actualizarPosicionServicios']);

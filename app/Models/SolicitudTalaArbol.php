@@ -5,14 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoServicio extends Model
+class SolicitudTalaArbol extends Model
 {
     use HasFactory;
-    protected $table = 'tiposervicio';
+    protected $table = 'solicitud_talaarbol';
     public $timestamps = false;
-
-    protected $fillable = [
-        'posicion'
-    ];
-
 }

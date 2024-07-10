@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\Configuracion\Servicios;
 
 use App\Http\Controllers\Controller;
 use App\Models\Servicios;
-use App\Models\TipoServicio;
+use App\Models\CategoriaServicio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,7 +29,7 @@ class ServiciosController extends Controller
 
 
     public function tablaTipoServicios(){
-        $listado = TipoServicio::orderBy('posicion', 'ASC')->get();
+        $listado = CategoriaServicio::orderBy('posicion', 'ASC')->get();
 
         return view('backend.admin.configuracion.tiposervicio.tablatiposervicio',compact('listado'));
     }
@@ -50,13 +50,13 @@ class ServiciosController extends Controller
 
         try {
 
-            if ($info = TipoServicio::orderBy('posicion', 'DESC')->first()) {
+            if ($info = CategoriaServicio::orderBy('posicion', 'DESC')->first()) {
                 $nuevaPosicion = $info->posicion + 1;
             } else {
                 $nuevaPosicion = 1;
             }
 
-            $registro = new TipoServicio();
+            $registro = new CategoriaServicio();
             $registro->nombre = $request->nombre;
             $registro->activo = 1;
             $registro->posicion = $nuevaPosicion;
@@ -80,7 +80,7 @@ class ServiciosController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
-        if($info = TipoServicio::where('id', $request->id)->first()){
+        if($info = CategoriaServicio::where('id', $request->id)->first()){
 
             return ['success' => 1, 'info' => $info];
         }else{
@@ -91,7 +91,7 @@ class ServiciosController extends Controller
 
     public function actualizarPosicionTipoServicios(Request $request){
 
-        $tasks = TipoServicio::all();
+        $tasks = CategoriaServicio::all();
 
         foreach ($tasks as $task) {
             $id = $task->id;
@@ -120,7 +120,7 @@ class ServiciosController extends Controller
             return ['success' => 0];
         }
 
-        TipoServicio::where('id', $request->id)
+        CategoriaServicio::where('id', $request->id)
             ->update([
                 'nombre' => $request->nombre,
                 'activo' => $request->toggle,
@@ -142,19 +142,19 @@ class ServiciosController extends Controller
     //************************** SERVICIOS *******************************
 
 
-    public function indexServicios($idtiposervicio){
+    public function indexServicios($idcategoria){
 
-        $arrayTipoServicio = TipoServicio::orderBy('nombre', 'ASC')->get();
+        $arrayTipoServicio = CategoriaServicio::orderBy('nombre', 'ASC')->get();
 
         return view('backend.admin.configuracion.tiposervicio.servicios.vistaservicios', compact('arrayTipoServicio',
-        'idtiposervicio'));
+        'idcategoria'));
     }
 
 
-    public function tablaServicios($idtiposervicio){
+    public function tablaServicios($idcategoria){
 
         $listado = Servicios::orderBy('posicion', 'ASC')
-            ->where('id_tiposervicio', $idtiposervicio)
+            ->where('id_cateservicio', $idcategoria)
             ->get();
 
         return view('backend.admin.configuracion.tiposervicio.servicios.tablaservicios',compact('listado'));
@@ -166,6 +166,7 @@ class ServiciosController extends Controller
         $regla = array(
             'nombre' => 'required',
             'idtiposervicio' => 'required',
+            'id_cateservicio' => 'required'
         );
 
         // imagen, descripcion
@@ -203,7 +204,8 @@ class ServiciosController extends Controller
                     $registro->activo = 1;
                     $registro->posicion = $nuevaPosicion;
                     $registro->imagen = $nombreFoto;
-                    $registro->id_tiposervicio = $request->idtiposervicio;
+                    $registro->tiposervicio = $request->idtiposervicio;
+                    $registro->id_cateservicio = $request->id_cateservicio;
                     $registro->save();
 
                     DB::commit();
@@ -213,8 +215,6 @@ class ServiciosController extends Controller
                     DB::rollback();
                     return ['success' => 99];
                 }
-
-
             }
             else {
                 return ['success' => 99];
@@ -236,9 +236,9 @@ class ServiciosController extends Controller
 
         if($info = Servicios::where('id', $request->id)->first()){
 
-            $arraylista = TipoServicio::orderBy('nombre', 'ASC')->get();
+            $arrayCategorias = CategoriaServicio::orderBy('nombre', 'ASC')->get();
 
-            return ['success' => 1, 'info' => $info, 'arraylista' => $arraylista];
+            return ['success' => 1, 'info' => $info, 'arrayCategorias' => $arrayCategorias];
         }else{
             return ['success' => 2];
         }
@@ -269,7 +269,8 @@ class ServiciosController extends Controller
         $rules = array(
             'id' => 'required',
             'toggle' => 'required',
-            'idtiposervicio' => 'required'
+            'idtipo' => 'required',
+            'idcategoria' => 'required'
         );
 
         $validator = Validator::make($request->all(), $rules);
@@ -298,11 +299,12 @@ class ServiciosController extends Controller
 
                 Servicios::where('id', $request->id)
                     ->update([
+                        'id_cateservicio' => $request->idcategoria,
+                        'tiposervicio' => $request->idtipo,
                         'nombre' => $request->nombre,
+                        'imagen' => $nombreFoto,
                         'descripcion' => $request->descripcion,
                         'activo' => $request->toggle,
-                        'imagen' => $nombreFoto,
-                        'id_tiposervicio' => $request->idtiposervicio
                     ]);
 
                 if(Storage::disk('archivos')->exists($imagenOld)){
@@ -317,10 +319,11 @@ class ServiciosController extends Controller
         } else {
             Servicios::where('id', $request->id)
                 ->update([
+                    'id_cateservicio' => $request->idcategoria,
+                    'tiposervicio' => $request->idtipo,
                     'nombre' => $request->nombre,
                     'descripcion' => $request->descripcion,
                     'activo' => $request->toggle,
-                    'id_tiposervicio' => $request->idtiposervicio
                 ]);
 
             return ['success' => 1];
