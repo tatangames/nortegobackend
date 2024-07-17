@@ -25,8 +25,13 @@ Route::middleware('verificarToken')->group(function () {
     Route::post('app/principal/listado', [ApiPrincipalController::class,'listadoPrincipal']);
 
 
-    // --- ENVIO DE SERVICIO BASICO ---
+    // --- GUARDAR DATOS SERVICIO BASICO ---
     Route::post('app/servicios/basicos/registrar', [ApiPrincipalController::class,'registrarServicioBasico']);
+
+    // --- GUARDAR DATOS DE TALA DE ARBOL ---
+    Route::post('app/servicios/talaarbol-solicitud/registrar', [ApiPrincipalController::class,'registrarTalaArbolSolicitud']);
+
+
 
 
 

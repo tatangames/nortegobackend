@@ -23,9 +23,11 @@ return new class extends Migration
             $table->string('imagen', 100);
             $table->text('nota')->nullable();
             $table->boolean('escrituras');
-
             $table->string('latitud', 100)->nullable();
             $table->string('longitud', 100)->nullable();
+
+            // ESTADO DE SOLICITUD
+            $table->integer('estado');
 
             $table->foreign('id_usuario')->references('id')->on('usuarios');
         });

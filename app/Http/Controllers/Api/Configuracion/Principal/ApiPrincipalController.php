@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\Configuracion\Principal;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoriaServicio;
+use App\Models\DenunciaBasico;
 use App\Models\Informacion;
 use App\Models\NotaServicioBasico;
 use App\Models\Servicios;
 use App\Models\Slider;
+use App\Models\SolicitudTalaArbol;
 use App\Models\TipoServicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -119,7 +121,7 @@ class ApiPrincipalController extends Controller
            if($request->latitud != null && $request->longitud != null){
 
                // DEL MISMO SERVICIO, QUE ESTAN ACTIVAS
-               $arrayNotaServicio = NotaServicioBasico::where('id_servicio', $request->idservicio)
+               $arrayNotaServicio = DenunciaBasico::where('id_servicio', $request->idservicio)
                     ->where('id_estado', 1)
                    ->get();
 
@@ -149,8 +151,6 @@ class ApiPrincipalController extends Controller
                }
            }
 
-
-
             if ($request->hasFile('imagen')) {
 
                 $cadena = Str::random(15);
@@ -171,7 +171,7 @@ class ApiPrincipalController extends Controller
 
                         $fechaHoy = Carbon::now('America/El_Salvador');
 
-                        $registro = new NotaServicioBasico();
+                        $registro = new DenunciaBasico();
                         $registro->id_usuario = $userToken->id;
                         $registro->id_servicio = $request->idservicio;
                         $registro->imagen = $nombreFoto;
@@ -231,6 +231,82 @@ class ApiPrincipalController extends Controller
         return $earthRadius * $c;
     }
 
+
+
+
+    public function registrarTalaArbolSolicitud(Request $request){
+
+        $rules = array(
+            'iduser' => 'required',
+            'nombre' => 'required',
+            'telefono' => 'required',
+            'direccion' => 'required',
+            'escritura' => 'required'
+        );
+
+        // imagen, nota latitud, longitud
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        $tokenApi = $request->header('Authorization');
+
+        if ($userToken = JWTAuth::user($tokenApi)) {
+
+            if ($request->hasFile('imagen')) {
+
+                $cadena = Str::random(15);
+                $tiempo = microtime();
+                $union = $cadena . $tiempo;
+                $nombre = str_replace(' ', '_', $union);
+
+                $extension = '.' . $request->imagen->getClientOriginalExtension();
+                $nombreFoto = $nombre . strtolower($extension);
+                $avatar = $request->file('imagen');
+                $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
+
+                if ($upload) {
+
+                    DB::beginTransaction();
+
+                    try {
+
+                        $fechaHoy = Carbon::now('America/El_Salvador');
+
+                        $registro = new SolicitudTalaArbol();
+                        $registro->id_usuario = $userToken->id;
+                        $registro->fecha = $fechaHoy;
+                        $registro->nombre = $request->nombre;
+                        $registro->nota = $request->nota;
+                        $registro->latitud = $request->latitud;
+                        $registro->longitud = $request->longitud;
+                        $registro->fecha = $fechaHoy;
+                        $registro->id_estado = 1;
+                        $registro->save();
+
+                        DB::commit();
+                        return ['success' => 1];
+                    }catch(\Throwable $e){
+                        Log::info("error" . $e);
+                        DB::rollback();
+                        return ['success' => 99];
+                    }
+
+                } else {
+                    // error al subir imagen
+                    return ['success' => 99];
+                }
+            } else {
+                return ['success' => 99];
+            }
+        }else{
+            return ['success' => 99];
+        }
+
+    }
 
 
 
