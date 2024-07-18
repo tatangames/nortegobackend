@@ -75,6 +75,7 @@
                                         <select class="form-control" id="select-tiposervicio-nuevo">
                                             <option value="1">Servicios Basicos</option>
                                             <option value="2">Tala de Arboles</option>
+                                            <option value="3">Denuncia Whatsapp</option>
                                         </select>
                                     </div>
 
@@ -146,6 +147,7 @@
                                         <select class="form-control" id="select-tiposervicio-editar">
                                             <option value="1">Servicios Basicos</option>
                                             <option value="2">Tala de Arboles</option>
+                                            <option value="3">Denuncia Whatsapp</option>
                                         </select>
                                     </div>
 
@@ -310,7 +312,9 @@
                         else if(idpos === 2){
                             miSelect.options.selectedIndex = 1;
                         }
-
+                        else if(idpos === 3){
+                            miSelect.options.selectedIndex = 2;
+                        }
 
 
                         document.getElementById("select-categoria-editar").options.length = 0;

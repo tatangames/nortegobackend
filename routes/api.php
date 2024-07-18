@@ -28,9 +28,11 @@ Route::middleware('verificarToken')->group(function () {
     // --- GUARDAR DATOS SERVICIO BASICO ---
     Route::post('app/servicios/basicos/registrar', [ApiPrincipalController::class,'registrarServicioBasico']);
 
-    // --- GUARDAR DATOS DE TALA DE ARBOL ---
+    // --- GUARDAR DATOS PARA SOLICITUD TALA DE ARBOL ---
     Route::post('app/servicios/talaarbol-solicitud/registrar', [ApiPrincipalController::class,'registrarTalaArbolSolicitud']);
 
+    // --- GUARDAR DATOS PARA DENUNCIA TALA DE ARBOL ---
+    Route::post('app/servicios/talaarbol-denuncia/registrar', [ApiPrincipalController::class,'registrarTalaArbolDenuncia']);
 
 
 
