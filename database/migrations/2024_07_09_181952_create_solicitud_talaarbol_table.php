@@ -28,6 +28,7 @@ return new class extends Migration
 
             // ESTADO DE SOLICITUD
             $table->integer('estado');
+            $table->boolean('visible');
 
             $table->foreign('id_usuario')->references('id')->on('usuarios');
         });

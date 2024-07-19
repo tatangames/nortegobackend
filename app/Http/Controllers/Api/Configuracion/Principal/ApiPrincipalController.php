@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoriaServicio;
 use App\Models\DenunciaBasico;
 use App\Models\DenunciaTalaArbol;
+use App\Models\EstadoBasico;
 use App\Models\Informacion;
 use App\Models\NotaServicioBasico;
 use App\Models\Servicios;
@@ -180,7 +181,8 @@ class ApiPrincipalController extends Controller
                         $registro->latitud = $request->latitud;
                         $registro->longitud = $request->longitud;
                         $registro->fecha = $fechaHoy;
-                        $registro->id_estado = 1;
+                        $registro->estado = 1;
+                        $registro->visible = 1;
                         $registro->save();
 
                         DB::commit();
@@ -290,6 +292,7 @@ class ApiPrincipalController extends Controller
                         $registro->longitud = $request->longitud;
                         $registro->fecha = $fechaHoy;
                         $registro->estado = 1;
+                        $registro->visible = 1;
                         $registro->save();
 
                         DB::commit();
@@ -360,6 +363,7 @@ class ApiPrincipalController extends Controller
                         $registro->latitud = $request->latitud;
                         $registro->longitud = $request->longitud;
                         $registro->fecha = $fechaHoy;
+                        $registro->estado = 1;
                         $registro->save();
 
                         DB::commit();
@@ -380,7 +384,143 @@ class ApiPrincipalController extends Controller
         }else{
             return ['success' => 99];
         }
+    }
 
+
+    public function listadoSolicitudes(Request $request){
+
+        $rules = array(
+            'iduser' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        $tokenApi = $request->header('Authorization');
+
+        if ($userToken = JWTAuth::user($tokenApi)) {
+
+            DB::beginTransaction();
+
+            try {
+
+                $combinedArray = [];
+
+                $arrayBasico = DenunciaBasico::where('id_usuario', $userToken->id)
+                    ->where('visible', 1)
+                    ->orderBy('fecha', 'DESC')
+                    ->get();
+
+                foreach ($arrayBasico as $dato){
+
+                    // SOLICITUD BASICA
+
+                    // ESTADOS
+                    if($dato->estado == 1){
+                        $estado = "Solicitud Pendiente";
+                    }else if($dato->estado == 2){
+                        $estado = "Solicitud Procesada";
+                    }
+                    else{
+                        $estado = "";
+                    }
+                    $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+
+                    $combinedArray[] = [
+                        'id' => $dato->id,
+                        'tipo' => 1,
+                        'estado' => $estado,
+                        'nota' => $dato->nota,
+                        'fecha' => $fechaFormat,
+                        'nombre' => '',
+                        'telefono' => '',
+                        'direccion' => '',
+                        'escritura' => ''
+                    ];
+                }
+
+                $arraySoliTala = SolicitudTalaArbol::where('id_usuario', $userToken->id)
+                    ->where('visible', 1)
+                    ->orderBy('fecha', 'DESC')
+                    ->get();
+
+                foreach ($arraySoliTala as $dato){
+                    // SOLICITUD TALA ARBOLES
+
+                    // ESTADOS
+                    if($dato->estado == 1){
+                        $estado = "Solicitud Pendiente";
+                    }else if($dato->estado == 2){
+                        $estado = "Solicitud Procesada";
+                    }
+                    else{
+                        $estado = "";
+                    }
+
+                    $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+
+                    $combinedArray[] = [
+                        'id' => $dato->id,
+                        'tipo' => 2,
+                        'estado' => $estado,
+                        'nota' => $dato->nota,
+                        'fecha' => $fechaFormat,
+                        'nombre' => $dato->nombre,
+                        'telefono' => $dato->telefono,
+                        'direccion' => $dato->direccion,
+                        'escritura' => $dato->escrituras
+                    ];
+                }
+
+                $arrayDenunciaTala = DenunciaTalaArbol::where('id_usuario', $userToken->id)
+                    ->where('visible', 1)
+                    ->orderBy('fecha', 'DESC')
+                    ->get();
+
+                foreach ($arraySoliTala as $dato){
+
+                    // DENUNCIA TALA DE ARBOLES
+
+                    // ESTADOS
+                    if($dato->estado == 1){
+                        $estado = "Solicitud Pendiente";
+                    }else if($dato->estado == 2){
+                        $estado = "Solicitud Procesada";
+                    }
+                    else{
+                        $estado = "";
+                    }
+
+                    $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+
+                    $combinedArray[] = [
+                        'id' => $dato->id,
+                        'tipo' => 3,
+                        'estado' => $estado,
+                        'nota' => $dato->nota,
+                        'fecha' => $fechaFormat,
+                        'nombre' => '',
+                        'telefono' => '',
+                        'direccion' => '',
+                        'escritura' => ''
+                    ];
+                }
+
+
+                DB::commit();
+                return ['success' => 1, 'listado' => $combinedArray];
+            }catch(\Throwable $e){
+                Log::info("error" . $e);
+                DB::rollback();
+                return ['success' => 99];
+            }
+
+        }else{
+            return ['success' => 99];
+        }
     }
 
 

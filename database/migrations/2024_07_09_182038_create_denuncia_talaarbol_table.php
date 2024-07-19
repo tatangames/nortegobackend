@@ -16,12 +16,12 @@ return new class extends Migration
             $table->bigInteger('id_usuario')->unsigned();
 
             $table->dateTime('fecha');
-
             $table->string('latitud', 100)->nullable();
             $table->string('longitud', 100)->nullable();
-
             $table->text('nota')->nullable();
             $table->string('imagen', 100)->nullable();
+            $table->integer('estado');
+            $table->boolean('visible');
 
             $table->foreign('id_usuario')->references('id')->on('usuarios');
         });
