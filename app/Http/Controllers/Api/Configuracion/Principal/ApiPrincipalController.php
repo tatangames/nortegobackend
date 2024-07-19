@@ -429,9 +429,14 @@ class ApiPrincipalController extends Controller
                     }
                     $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
 
+                    // nombre del servicio basico
+                    $infoNomBas = Servicios::where('id', $dato->id_estado)->first();
+
+
                     $combinedArray[] = [
                         'id' => $dato->id,
-                        'tipo' => 1,
+                        'tipo' => 1, // identificador que es el Array
+                        'nombretipo' => $infoNomBas->nombre,
                         'estado' => $estado,
                         'nota' => $dato->nota,
                         'fecha' => $fechaFormat,
@@ -464,7 +469,8 @@ class ApiPrincipalController extends Controller
 
                     $combinedArray[] = [
                         'id' => $dato->id,
-                        'tipo' => 2,
+                        'tipo' => 2,  // identificador que es el Array
+                        'nombretipo' => "Solicitud Tala de Árbol",
                         'estado' => $estado,
                         'nota' => $dato->nota,
                         'fecha' => $fechaFormat,
@@ -498,7 +504,8 @@ class ApiPrincipalController extends Controller
 
                     $combinedArray[] = [
                         'id' => $dato->id,
-                        'tipo' => 3,
+                        'tipo' => 3,  // identificador que es el Array
+                        'nombretipo' => "Denuncia Tala de Árbol",
                         'estado' => $estado,
                         'nota' => $dato->nota,
                         'fecha' => $fechaFormat,
@@ -509,6 +516,10 @@ class ApiPrincipalController extends Controller
                     ];
                 }
 
+
+                usort($combinedArray, function ($a, $b) {
+                    return strtotime($b['fecha']) - strtotime($a['fecha']);
+                });
 
                 DB::commit();
                 return ['success' => 1, 'listado' => $combinedArray];
