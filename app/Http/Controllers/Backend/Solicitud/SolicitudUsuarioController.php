@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Backend\Solicitud;
 
 use App\Http\Controllers\Controller;
-use App\Models\NotaServicioBasico;
+use App\Models\DenunciaBasico;
+use App\Models\SolicitudTalaArbol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,10 +21,12 @@ class SolicitudUsuarioController extends Controller
     }
 
 
+    // TABLA PARA RED VIAL
     public function tablaSolicitudRedVial(){
 
-        $listado = NotaServicioBasico::where('id_servicio', 1)
-            ->where('id_estado', 1)
+
+        $listado = DenunciaBasico::where('id_servicio', 1) // RED VIAL
+            ->where('estado', 1)
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -37,7 +40,7 @@ class SolicitudUsuarioController extends Controller
 
     public function mapaSolicitudBasica(Request $request){
 
-        $infoNotaSer = NotaServicioBasico::where('id', $request->id)->first();
+        $infoNotaSer = DenunciaBasico::where('id', $request->id)->first();
 
         if($infoNotaSer->latitud != null && $infoNotaSer->longitud != null){
 
@@ -64,9 +67,9 @@ class SolicitudUsuarioController extends Controller
             return ['success' => 0];
         }
 
-        NotaServicioBasico::where('id', $request->id)
+        DenunciaBasico::where('id', $request->id)
             ->update([
-                'id_estado' => 2,
+                'estado' => 2,
             ]);
 
         return ['success' => 1];
@@ -94,8 +97,8 @@ class SolicitudUsuarioController extends Controller
         $porciones = explode("-", $idlista);
 
         // filtrado por x departamento y x año
-        $arrayListado = NotaServicioBasico::whereIn('id', $porciones)
-            ->where('id_servicio', 1) // BACHEO
+        $arrayListado = DenunciaBasico::whereIn('id', $porciones)
+            ->where('id_servicio', 1) // RED VIAL
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -151,8 +154,8 @@ class SolicitudUsuarioController extends Controller
 
 
     public function tablaSolicitudRedVialFinalizada(){
-        $listado = NotaServicioBasico::where('id_servicio', 1) // BACHEO
-            ->where('id_estado', 2)
+        $listado = DenunciaBasico::where('id_servicio', 1) // RED VIAL
+            ->where('estado', 2) // FINALIZADAS
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -169,13 +172,13 @@ class SolicitudUsuarioController extends Controller
     //***************** ALUMBRADO ELECTRICO ***********************
 
     public function indexSolicitudAlumbrado(){
-
         return view('backend.admin.solicitudes.alumbrado.activas.vistaalumbrado');
     }
 
     public function tablaSolicitudAlumbrado(){
-        $listado = NotaServicioBasico::where('id_servicio', 2) // ALUMBRADO
-            ->where('id_estado', 1)
+
+        $listado = DenunciaBasico::where('id_servicio', 2) // ALUMBRADO
+            ->where('estado', 1)
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -200,9 +203,9 @@ class SolicitudUsuarioController extends Controller
             return ['success' => 0];
         }
 
-        NotaServicioBasico::where('id', $request->id)
+        DenunciaBasico::where('id', $request->id)
             ->update([
-                'id_estado' => 2,
+                'estado' => 2,
             ]);
 
         return ['success' => 1];
@@ -230,7 +233,7 @@ class SolicitudUsuarioController extends Controller
         $porciones = explode("-", $idlista);
 
         // filtrado por x departamento y x año
-        $arrayListado = NotaServicioBasico::whereIn('id', $porciones)
+        $arrayListado = DenunciaBasico::whereIn('id', $porciones)
             ->where('id_servicio', 2) // ALUMBRADO ELECTRICO
             ->orderBy('fecha', 'DESC')
             ->get();
@@ -284,8 +287,8 @@ class SolicitudUsuarioController extends Controller
 
     public function tablaSolicitudAlumbradoFinalizada(){
 
-        $listado = NotaServicioBasico::where('id_servicio', 2) // ALUMBRADO ELECTRICO
-            ->where('id_estado', 2)
+        $listado = DenunciaBasico::where('id_servicio', 2) // ALUMBRADO ELECTRICO
+            ->where('estado', 2)
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -310,8 +313,8 @@ class SolicitudUsuarioController extends Controller
     }
 
     public function tablaSolicitudDesechos(){
-        $listado = NotaServicioBasico::where('id_servicio', 3) // DESECHOS
-        ->where('id_estado', 1)
+        $listado = DenunciaBasico::where('id_servicio', 3) // DESECHOS
+        ->where('estado', 1)
         ->orderBy('fecha', 'DESC')
         ->get();
 
@@ -336,9 +339,9 @@ class SolicitudUsuarioController extends Controller
             return ['success' => 0];
         }
 
-        NotaServicioBasico::where('id', $request->id)
+        DenunciaBasico::where('id', $request->id)
             ->update([
-                'id_estado' => 2,
+                'estado' => 2,
             ]);
 
         return ['success' => 1];
@@ -366,7 +369,7 @@ class SolicitudUsuarioController extends Controller
         $porciones = explode("-", $idlista);
 
         // filtrado por x departamento y x año
-        $arrayListado = NotaServicioBasico::whereIn('id', $porciones)
+        $arrayListado = DenunciaBasico::whereIn('id', $porciones)
             ->where('id_servicio', 3) // DESECHOS SOLIDOS
             ->orderBy('fecha', 'DESC')
             ->get();
@@ -420,8 +423,8 @@ class SolicitudUsuarioController extends Controller
 
     public function tablaSolicitudDesechosFinalizada(){
 
-        $listado = NotaServicioBasico::where('id_servicio', 3) // DESECHOS SOLIDOS
-        ->where('id_estado', 2)
+        $listado = DenunciaBasico::where('id_servicio', 3) // DESECHOS SOLIDOS
+            ->where('estado', 2)
             ->orderBy('fecha', 'DESC')
             ->get();
 
@@ -432,6 +435,30 @@ class SolicitudUsuarioController extends Controller
 
         return view('backend.admin.solicitudes.desechos.finalizadas.tabladesechosfinalizada', compact('listado'));
     }
+
+
+    public function indexSolicitudTalaArbol()
+    {
+        return view('backend.admin.solicitudes.medioambiente.solicitud.talaarbolsolicitud');
+    }
+
+
+    public function tablaSolicitudTalaArbol()
+    {
+        $listado = SolicitudTalaArbol::where('estado', 1)
+            ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($listado as $dato){
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
+        }
+
+        return view('backend.admin.solicitudes.medioambiente.solicitud.tablatalaarbolsolicitud', compact('listado'));
+    }
+
+
+
+
 
 
 }

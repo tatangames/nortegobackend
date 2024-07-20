@@ -130,6 +130,17 @@ Route::get('/admin/solicitud/desechos/reportevarios/{listado}', [SolicitudUsuari
 Route::get('/admin/solicitud/desechosfinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudDesechosFinalizada'])->name('admin.solicitud.desechos.finalizada.index');
 Route::get('/admin/solicitud/desechosfinalizada/tabla', [SolicitudUsuarioController::class,'tablaSolicitudDesechosFinalizada']);
 
+// --- MEDIO AMBIENTE: SOLICITUD TALA ARBOL
+Route::get('/admin/mediambiente/solicitud/talaarbol/index', [SolicitudUsuarioController::class,'indexSolicitudTalaArbol'])->name('admin.solicitud.tala.arbol');
+Route::get('/admin/mediambiente/solicitud/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaSolicitudTalaArbol']);
+
+
+
+
+
+
+
+
 
 
 

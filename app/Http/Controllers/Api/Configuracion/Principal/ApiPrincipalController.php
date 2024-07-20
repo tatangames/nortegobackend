@@ -124,7 +124,7 @@ class ApiPrincipalController extends Controller
 
                // DEL MISMO SERVICIO, QUE ESTAN ACTIVAS
                $arrayNotaServicio = DenunciaBasico::where('id_servicio', $request->idservicio)
-                    ->where('id_estado', 1)
+                    ->where('estado', 1)
                    ->get();
 
                // VERIFICAR COORDENADAS SI ESTAN DENTRO DEL MISMO RANGO
@@ -364,6 +364,7 @@ class ApiPrincipalController extends Controller
                         $registro->longitud = $request->longitud;
                         $registro->fecha = $fechaHoy;
                         $registro->estado = 1;
+                        $registro->visible = 1;
                         $registro->save();
 
                         DB::commit();
@@ -414,6 +415,7 @@ class ApiPrincipalController extends Controller
                     ->orderBy('fecha', 'DESC')
                     ->get();
 
+
                 foreach ($arrayBasico as $dato){
 
                     // SOLICITUD BASICA
@@ -430,7 +432,7 @@ class ApiPrincipalController extends Controller
                     $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
 
                     // nombre del servicio basico
-                    $infoNomBas = Servicios::where('id', $dato->id_estado)->first();
+                    $infoNomBas = Servicios::where('id', $dato->id_servicio)->first();
 
 
                     $combinedArray[] = [
@@ -443,7 +445,7 @@ class ApiPrincipalController extends Controller
                         'nombre' => '',
                         'telefono' => '',
                         'direccion' => '',
-                        'escritura' => ''
+                        'escritura' => 0
                     ];
                 }
 
@@ -512,7 +514,7 @@ class ApiPrincipalController extends Controller
                         'nombre' => '',
                         'telefono' => '',
                         'direccion' => '',
-                        'escritura' => ''
+                        'escritura' => 0
                     ];
                 }
 
@@ -533,6 +535,71 @@ class ApiPrincipalController extends Controller
             return ['success' => 99];
         }
     }
+
+
+
+    // OCULTAR AL USUARIO
+    public function ocultarSolicitudes(Request $request)
+    {
+        $rules = array(
+            'id' => 'required',
+            'tipo' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        $tokenApi = $request->header('Authorization');
+
+        if ($userToken = JWTAuth::user($tokenApi)) {
+
+            DB::beginTransaction();
+
+            try {
+
+                $idFila = $request->id;
+
+                if($request->tipo == 1){
+                    // BASICO
+
+                    DenunciaBasico::where('id', $idFila)
+                        ->update([
+                            'visible' => 0,
+                        ]);
+
+                }else if($request->tipo == 2){
+                    // SOLICITUD TALA DE ARBOL
+
+                    SolicitudTalaArbol::where('id', $idFila)
+                        ->update([
+                            'visible' => 0,
+                        ]);
+                }
+                else if($request->tipo == 3){
+                    // DENUNCIA TALA DE ARBOL
+
+                    DenunciaTalaArbol::where('id', $idFila)
+                        ->update([
+                            'visible' => 0,
+                        ]);
+                }
+
+                DB::commit();
+                return ['success' => 1];
+            }catch(\Throwable $e){
+                Log::info("error" . $e);
+                DB::rollback();
+                return ['success' => 99];
+            }
+
+        }else{
+            return ['success' => 99];
+        }
+    }
+
 
 
 

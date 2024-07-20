@@ -37,6 +37,9 @@ Route::middleware('verificarToken')->group(function () {
     // LISTADDO DE SOLICITUDES MIXTAS
     Route::post('app/solicitudes/listado', [ApiPrincipalController::class,'listadoSolicitudes']);
 
+    // OCULTAR SOLICITUD POR EL USUARIO
+    Route::post('app/solicitudes/ocultar', [ApiPrincipalController::class,'ocultarSolicitudes']);
+
 
 
 

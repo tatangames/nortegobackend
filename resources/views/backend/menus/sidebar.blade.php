@@ -130,33 +130,79 @@
                         </ul>
                     </li>
 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-edit"></i>
-                                <p>
-                                    Desechos Sólidos
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-edit"></i>
+                            <p>
+                                Desechos Sólidos
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
 
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('admin.solicitud.desechos.activa.index') }}" target="frameprincipal" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Activas</p>
-                                    </a>
-                                </li>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.solicitud.desechos.activa.index') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Activas</p>
+                                </a>
+                            </li>
 
-                                <li class="nav-item">
-                                    <a href="{{ route('admin.solicitud.desechos.finalizada.index') }}" target="frameprincipal" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Finalizadas</p>
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.solicitud.desechos.finalizada.index') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Finalizadas</p>
+                                </a>
+                            </li>
 
 
-                            </ul>
-                        </li>
+                        </ul>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-edit"></i>
+                            <p>
+                                Solicitud Tala
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.solicitud.tala.arbol') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Solicitudes Activas</p>
+                                </a>
+                            </li>
+
+
+
+
+                        </ul>
+                    </li>
+
+
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-edit"></i>
+                            <p>
+                                Denuncia Tala
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+
+
+
+
+
+                        </ul>
+                    </li>
 
 
 

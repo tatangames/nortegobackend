@@ -9,8 +9,9 @@
                             <tr>
                                 <th style="width: 6%">Reporte</th>
                                 <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Nota</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
                                 <th>Imagen</th>
                                 <th>Opciones</th>
                             </tr>
@@ -25,13 +26,17 @@
 
                                     </td>
                                     <td>{{ $dato->fechaFormat }}</td>
-                                    <td>{{ $dato->horaFormat }}</td>
-                                    <td>{{ $dato->nota }}</td>
+                                    <td>{{ $dato->nombre }}</td>
+                                    <td>{{ $dato->telefono }}</td>
 
                                     <td>
                                         <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="125px" height="125px" /></center>
                                     </td>
                                     <td>
+
+                                        <button type="button" class="btn btn-success btn-xs" onclick="modalFinalizar({{ $dato->id }})">
+                                            <i class="fas fa-check" title="Finalizar"></i>&nbsp; Finalizar
+                                        </button>
 
                                         <button type="button" style="margin-left: 5px" class="btn btn-info btn-xs" onclick="vistaMapa({{ $dato->id }})">
                                             <i class="fas fa-map" title="Mapa"></i>&nbsp; Mapa
