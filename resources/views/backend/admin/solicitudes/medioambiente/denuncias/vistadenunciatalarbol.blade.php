@@ -12,6 +12,31 @@
         /*Ajustar tablas*/
         table-layout:fixed;
     }
+    .custom-modal {
+        max-width: 1000px;
+    }
+
+    .custom-modal .modal-content {
+        height: 600px;
+    }
+
+    .custom-modal .modal-body {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .custom-modal .modal-body .embed-responsive {
+        width: 100%;
+        height: 100%;
+    }
+
+    .custom-modal .modal-body .embed-responsive-item {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Cambia a 'cover' si prefieres que la imagen cubra todo el espacio */
+    }
 </style>
 
 
@@ -35,11 +60,12 @@
         </div>
 
 
-
+        <!--
         <button type="button" style="margin: 10px" onclick="checkReporte()" class="btn btn-primary btn-sm">
             <i class="fas fa-plus-square"></i>
             Reporte
         </button>
+        -->
 
     </section>
 
@@ -47,7 +73,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Alumbrado Eléctrico Activos</h3>
+                    <h3 class="card-title">Denuncia Tala de Árbol</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -60,6 +86,28 @@
             </div>
         </div>
     </section>
+
+
+
+    <!--Cuadro modal para el Zoom de las fotos-->
+    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog custom-modal">
+            <!--Contenido-->
+            <div class="modal-content">
+                <div class="modal-body mb-0 p-0">
+                    <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+                        <img id="imgModal" src="" class="embed-responsive-item" alt="">
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button class="btn btn-primary btn-anis ml-0" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+            <!--Fin Contenido-->
+        </div>
+    </div>
+
 
 </div>
 
@@ -78,7 +126,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/mediambiente/solicitud/talaarbol/tabla') }}";
+            var ruta = "{{ URL::to('/admin/mediambiente/denuncia/talaarbol/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             countdown();
@@ -89,7 +137,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/mediambiente/solicitud/talaarbol/tabla') }}";
+            var ruta = "{{ URL::to('/admin/mediambiente/denuncia/talaarbol/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -130,70 +178,13 @@
         }
 
 
-        function finalizarSolicitud(id){
-
-            openLoading();
-            var formData = new FormData();
-            formData.append('id', id);
-
-            axios.post('/admin/solicitud/alumbrado/finalizar', formData, {
-            })
-                .then((response) => {
-                    closeLoading();
-                    if(response.data.success === 1){
-                        toastr.success('Finalizado');
-                        recargar();
-                    }
-                    else {
-                        toastr.error('Error al finalizar');
-                    }
-                })
-                .catch((error) => {
-                    toastr.error('Error al finalizar');
-                    closeLoading();
-                });
-        }
-
-
-        function checkReporte(){
-
-            var tableRows = document.querySelectorAll('#tabla tbody tr');
-
-            var selected = [];
-
-            if (tableRows.length === 0) {
-                toastr.error('No hay registros');
-                return;
-            }
-
-            tableRows.forEach(function(row) {
-                var checkbox = row.querySelector('.checkbox');
-                if(checkbox != null) {
-                    if (checkbox.checked) {
-                        var dataInfo = row.getAttribute('data-info');
-                        selected.push(dataInfo);
-                    }
-                }
-            });
-
-            if (selected.length <= 0) {
-                toastr.error('Seleccionar Mínimo 1 Fila')
-                return;
-            }
-
-            let listado = selected.toString();
-            let reemplazo = listado.replace(/,/g, "-");
-
-            window.open("{{ URL::to('admin/solicitud/alumbrado/reportevarios') }}/" + reemplazo);
-        }
-
         function vistaMapa(id){
 
             openLoading();
             var formData = new FormData();
             formData.append('id', id);
 
-            axios.post('/admin/solicitud/basico/mapa', formData, {
+            axios.post('/admin/mediambiente/solicitud/mapa', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -213,6 +204,12 @@
                     toastr.error('Error al buscar');
                     closeLoading();
                 });
+        }
+
+
+        function getPath(img) {
+            atributo = img.getAttribute("src");
+            document.getElementById("imgModal").setAttribute("src", atributo);
         }
 
 

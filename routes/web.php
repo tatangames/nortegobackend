@@ -133,8 +133,17 @@ Route::get('/admin/solicitud/desechosfinalizada/tabla', [SolicitudUsuarioControl
 // --- MEDIO AMBIENTE: SOLICITUD TALA ARBOL
 Route::get('/admin/mediambiente/solicitud/talaarbol/index', [SolicitudUsuarioController::class,'indexSolicitudTalaArbol'])->name('admin.solicitud.tala.arbol');
 Route::get('/admin/mediambiente/solicitud/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaSolicitudTalaArbol']);
+Route::post('/admin/mediambiente/solicitud/informacion', [SolicitudUsuarioController::class,'informacionSolicitudTalaArbol']);
+Route::post('/admin/mediambiente/solicitud/mapa', [SolicitudUsuarioController::class,'mapaSolicitudTalaArbol']);
+Route::post('/admin/mediambiente/solicitud/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudTalaArbol']);
 
+Route::get('/admin/mediambiente/solicitud-finalizada/talaarbol/index', [SolicitudUsuarioController::class,'indexSolicitudFinalizadaTalaArbol'])->name('admin.solicitud.finalizada.tala.arbol');
+Route::get('/admin/mediambiente/solicitud-finalizada/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaSolicitudFinalizadaTalaArbol']);
 
+// --- DENUNCIA DE TALA DE ARBOL ---
+
+Route::get('/admin/mediambiente/denuncia/talaarbol/index', [SolicitudUsuarioController::class,'indexDenunciaTalaArbol'])->name('admin.denuncia.tala.arbol');
+Route::get('/admin/mediambiente/denuncia/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaDenunciaTalaArbol']);
 
 
 

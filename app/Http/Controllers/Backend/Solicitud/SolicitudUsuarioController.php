@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Solicitud;
 
 use App\Http\Controllers\Controller;
 use App\Models\DenunciaBasico;
+use App\Models\DenunciaTalaArbol;
 use App\Models\SolicitudTalaArbol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -439,7 +440,7 @@ class SolicitudUsuarioController extends Controller
 
     public function indexSolicitudTalaArbol()
     {
-        return view('backend.admin.solicitudes.medioambiente.solicitud.talaarbolsolicitud');
+        return view('backend.admin.solicitudes.medioambiente.solicitud.vistatalaarbolsolicitud');
     }
 
 
@@ -454,6 +455,113 @@ class SolicitudUsuarioController extends Controller
         }
 
         return view('backend.admin.solicitudes.medioambiente.solicitud.tablatalaarbolsolicitud', compact('listado'));
+    }
+
+
+    public function informacionSolicitudTalaArbol(Request $request)
+    {
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($info = SolicitudTalaArbol::where('id', $request->id)->first()){
+
+            $fechaFormat = date("d-m-Y h:i A", strtotime($info->fecha));
+
+
+            return ['success' => 1, 'info' => $info,
+                'fechaFormat' => $fechaFormat];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function mapaSolicitudTalaArbol(Request $request){
+
+        $infoNotaSer = SolicitudTalaArbol::where('id', $request->id)->first();
+
+        if($infoNotaSer->latitud != null && $infoNotaSer->longitud != null){
+
+            $latitude = $infoNotaSer->latitud;
+            $longitude = $infoNotaSer->longitud;
+
+            $googleMapsUrl = "https://www.google.com/maps?q={$latitude},{$longitude}";
+            return ['success' => 1, 'url' => $googleMapsUrl];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function finalizarSolicitudTalaArbol(Request $request){
+
+        $rules = array(
+            'id' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        SolicitudTalaArbol::where('id', $request->id)
+            ->update([
+                'estado' => 2,
+            ]);
+
+        return ['success' => 1];
+    }
+
+
+    //*********************************************************************
+
+    public function indexSolicitudFinalizadaTalaArbol()
+    {
+        return view('backend.admin.solicitudes.medioambiente.solicitud.finalizada.vistatalaarbolsolicitudfinalizada');
+    }
+
+
+    public function tablaSolicitudFinalizadaTalaArbol()
+    {
+        $listado = SolicitudTalaArbol::where('estado', 2)
+            ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($listado as $dato){
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
+        }
+
+        return view('backend.admin.solicitudes.medioambiente.solicitud.finalizada.tablatalaarbolsolicitudfinalizada', compact('listado'));
+    }
+
+
+
+    //**********************************************************************
+
+    public function indexDenunciaTalaArbol()
+    {
+        return view('backend.admin.solicitudes.medioambiente.denuncias.vistadenunciatalarbol');
+    }
+
+
+
+    public function tablaDenunciaTalaArbol()
+    {
+        $listado = DenunciaTalaArbol::where('estado', 1)
+            ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($listado as $dato){
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
+        }
+
+        return view('backend.admin.solicitudes.medioambiente.denuncias.tabladenunciatalaarbol', compact('listado'));
     }
 
 

@@ -7,10 +7,11 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 6%">Reporte</th>
+
                                 <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Nota</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
                                 <th>Imagen</th>
                                 <th>Opciones</th>
                             </tr>
@@ -19,26 +20,26 @@
 
                             @foreach($listado as $dato)
                                 <tr data-info="{{ $dato->id }}">
-                                    <td style="width: 6%">
 
-                                        <input type="checkbox" class="checkbox" style="width: 40px; height: 20px" />
-
-                                    </td>
                                     <td>{{ $dato->fechaFormat }}</td>
-                                    <td>{{ $dato->horaFormat }}</td>
-                                    <td>{{ $dato->nota }}</td>
+                                    <td>{{ $dato->nombre }}</td>
+                                    <td>{{ $dato->telefono }}</td>
+                                    <td>{{ $dato->direccion }}</td>
 
                                     <td>
+
                                         <div class="col-md-12 animate-box">
                                             <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">
-                                        </div>                                    </td>
+                                        </div>
+
+                                    </td>
                                     <td>
 
-                                        <button type="button" class="btn btn-success btn-xs" onclick="modalFinalizar({{ $dato->id }})">
-                                            <i class="fas fa-check" title="Finalizar"></i>&nbsp; Finalizar
+                                        <button type="button" style="margin: 5px" class="btn btn-primary btn-xs" onclick="modalInformacion({{ $dato->id }})">
+                                            <i class="fas fa-info" title="Información"></i>&nbsp; Información
                                         </button>
 
-                                        <button type="button" style="margin-left: 5px" class="btn btn-info btn-xs" onclick="vistaMapa({{ $dato->id }})">
+                                        <button type="button" style="margin: 5px" class="btn btn-info btn-xs" onclick="vistaMapa({{ $dato->id }})">
                                             <i class="fas fa-map" title="Mapa"></i>&nbsp; Mapa
                                         </button>
 
@@ -59,9 +60,19 @@
 
 <script>
     $(function () {
+
+        // Añadir el tipo de datos personalizado para fechas en formato d-m-y
+        $.fn.dataTable.ext.type.order['date-dmy-pre'] = function (d) {
+            // Divide la fecha por el guion
+            var parts = d.split('-');
+            // Retorna en formato YYYYMMDD
+            return parts[2] + parts[1] + parts[0];
+        };
+
+
         $("#tabla").DataTable({
             columnDefs: [
-                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+                { type: 'date-dmy', targets: 0 } // La columna de fecha es la primera (índice 0)
             ],
             "paging": true,
             "lengthChange": true,

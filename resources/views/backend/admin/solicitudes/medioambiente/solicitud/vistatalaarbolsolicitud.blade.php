@@ -12,7 +12,6 @@
         /*Ajustar tablas*/
         table-layout:fixed;
     }
-
     .custom-modal {
         max-width: 1000px;
     }
@@ -38,7 +37,6 @@
         height: 100%;
         object-fit: contain; /* Cambia a 'cover' si prefieres que la imagen cubra todo el espacio */
     }
-
 </style>
 
 
@@ -56,17 +54,18 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Red Vial</li>
+                    <li class="breadcrumb-item active">Alumbrado Eléctrico</li>
                 </ol>
             </div>
         </div>
 
 
-
+        <!--
         <button type="button" style="margin: 10px" onclick="checkReporte()" class="btn btn-primary btn-sm">
             <i class="fas fa-plus-square"></i>
             Reporte
         </button>
+        -->
 
     </section>
 
@@ -74,7 +73,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Listado Red Vial Activas</h3>
+                    <h3 class="card-title">Solicitud Tala de Árbol Pendientes</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -87,6 +86,74 @@
             </div>
         </div>
     </section>
+
+
+
+
+    <div class="modal fade" id="modalInformacion">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Información</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-informacion">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="form-group">
+                                        <label>Fecha</label>
+                                        <input type="text" disabled class="form-control" id="fecha-info">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Teléfono</label>
+                                        <input type="text" disabled class="form-control" id="telefono-info">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Dirección</label>
+                                        <input type="text" disabled class="form-control" id="direccion-info">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nota</label>
+                                        <textarea type="text" disabled class="form-control" id="nota-info"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Tiene Escritura?</label>
+                                        <input type="text" disabled class="form-control" id="escritura-info">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Latitud</label>
+                                        <input type="text" disabled class="form-control" id="latitud-info">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Longitud</label>
+                                        <input type="text" disabled class="form-control" id="longitud-info">
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <!--Cuadro modal para el Zoom de las fotos-->
@@ -108,6 +175,10 @@
         </div>
     </div>
 
+
+
+
+
 </div>
 
 
@@ -125,7 +196,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/solicitud/redvial/tabla') }}";
+            var ruta = "{{ URL::to('/admin/mediambiente/solicitud/talaarbol/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             countdown();
@@ -136,7 +207,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/solicitud/redvial/tabla') }}";
+            var ruta = "{{ URL::to('/admin/mediambiente/solicitud/talaarbol/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -183,7 +254,7 @@
             var formData = new FormData();
             formData.append('id', id);
 
-            axios.post('/admin/solicitud/redvial/finalizar', formData, {
+            axios.post('/admin/mediambiente/solicitud/finalizar', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -202,37 +273,6 @@
         }
 
 
-        function checkReporte(){
-
-            var tableRows = document.querySelectorAll('#tabla tbody tr');
-
-            var selected = [];
-
-            if (tableRows.length === 0) {
-                toastr.error('No hay registros');
-                return;
-            }
-
-            tableRows.forEach(function(row) {
-                var checkbox = row.querySelector('.checkbox');
-                if(checkbox != null) {
-                    if (checkbox.checked) {
-                        var dataInfo = row.getAttribute('data-info');
-                        selected.push(dataInfo);
-                    }
-                }
-            });
-
-            if (selected.length <= 0) {
-                toastr.error('Seleccionar Mínimo 1 Fila')
-                return;
-            }
-
-            let listado = selected.toString();
-            let reemplazo = listado.replace(/,/g, "-");
-
-            window.open("{{ URL::to('admin/solicitud/redvial/reportevarios') }}/" + reemplazo);
-        }
 
         function vistaMapa(id){
 
@@ -240,7 +280,7 @@
             var formData = new FormData();
             formData.append('id', id);
 
-            axios.post('/admin/solicitud/basico/mapa', formData, {
+            axios.post('/admin/mediambiente/solicitud/mapa', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -251,6 +291,49 @@
                     else if(response.data.success === 2){
                         // NO HAY COORDENADAS
                         toastr.error('No se encontro Latitud y Longitud del Usuario')
+                    }
+                    else {
+                        toastr.error('Error al buscar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al buscar');
+                    closeLoading();
+                });
+        }
+
+
+
+        function modalInformacion(id){
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+
+            axios.post('/admin/mediambiente/solicitud/informacion', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        document.getElementById("formulario-informacion").reset();
+
+                        $('#fecha-info').val(response.data.fechaFormat);
+                        $('#telefono-info').val(response.data.info.telefono);
+                        $('#direccion-info').val(response.data.info.direccion);
+                        $('#nota-info').val(response.data.info.nota);
+
+                        if(response.data.info.escrituras == 1){
+                            $('#escritura-info').val("Si");
+                        }else{
+                            $('#escritura-info').val("No");
+                        }
+
+                        $('#latitud-info').val(response.data.info.latitud);
+                        $('#longitud-info').val(response.data.info.longitud);
+
+                        $('#modalInformacion').modal('show');
                     }
                     else {
                         toastr.error('Error al buscar');

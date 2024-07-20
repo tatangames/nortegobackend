@@ -7,7 +7,7 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 6%">Reporte</th>
+
                                 <th>Fecha</th>
                                 <th>Nombre</th>
                                 <th>Teléfono</th>
@@ -20,17 +20,18 @@
 
                             @foreach($listado as $dato)
                                 <tr data-info="{{ $dato->id }}">
-                                    <td style="width: 6%">
 
-                                        <input type="checkbox" class="checkbox" style="width: 40px; height: 20px" />
-
-                                    </td>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nombre }}</td>
                                     <td>{{ $dato->telefono }}</td>
+                                    <td>{{ $dato->direccion }}</td>
 
                                     <td>
-                                        <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="125px" height="125px" /></center>
+
+                                        <div class="col-md-12 animate-box">
+                                            <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">
+                                        </div>
+
                                     </td>
                                     <td>
 
@@ -38,7 +39,11 @@
                                             <i class="fas fa-check" title="Finalizar"></i>&nbsp; Finalizar
                                         </button>
 
-                                        <button type="button" style="margin-left: 5px" class="btn btn-info btn-xs" onclick="vistaMapa({{ $dato->id }})">
+                                        <button type="button" style="margin: 5px" class="btn btn-primary btn-xs" onclick="modalInformacion({{ $dato->id }})">
+                                            <i class="fas fa-info" title="Información"></i>&nbsp; Información
+                                        </button>
+
+                                        <button type="button" style="margin: 5px" class="btn btn-info btn-xs" onclick="vistaMapa({{ $dato->id }})">
                                             <i class="fas fa-map" title="Mapa"></i>&nbsp; Mapa
                                         </button>
 
