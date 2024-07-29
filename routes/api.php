@@ -34,19 +34,19 @@ Route::middleware('verificarToken')->group(function () {
     // --- GUARDAR DATOS PARA DENUNCIA TALA DE ARBOL ---
     Route::post('app/servicios/talaarbol-denuncia/registrar', [ApiPrincipalController::class,'registrarTalaArbolDenuncia']);
 
-    // LISTADDO DE SOLICITUDES MIXTAS
+    // LISTADO DE SOLICITUDES MIXTAS
     Route::post('app/solicitudes/listado', [ApiPrincipalController::class,'listadoSolicitudes']);
 
     // OCULTAR SOLICITUD POR EL USUARIO
     Route::post('app/solicitudes/ocultar', [ApiPrincipalController::class,'ocultarSolicitudes']);
 
+    // REGISTRAR SERVICIO DE CATASTRO
+    Route::post('app/solicitud/catastro', [ApiPrincipalController::class,'registrarSolicitudCatastro']);
+
 
 
 
 });
-
-
-
 
 
 

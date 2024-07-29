@@ -76,6 +76,7 @@
                                             <option value="1">Servicios Basicos</option>
                                             <option value="2">Tala de Arboles</option>
                                             <option value="3">Denuncia Whatsapp</option>
+                                            <option value="4">Catastro</option>
                                         </select>
                                     </div>
 
@@ -148,6 +149,7 @@
                                             <option value="1">Servicios Basicos</option>
                                             <option value="2">Tala de Arboles</option>
                                             <option value="3">Denuncia Whatsapp</option>
+                                            <option value="4">Catastro</option>
                                         </select>
                                     </div>
 
@@ -315,7 +317,9 @@
                         else if(idpos === 3){
                             miSelect.options.selectedIndex = 2;
                         }
-
+                        else if(idpos === 4){
+                            miSelect.options.selectedIndex = 3;
+                        }
 
                         document.getElementById("select-categoria-editar").options.length = 0;
 

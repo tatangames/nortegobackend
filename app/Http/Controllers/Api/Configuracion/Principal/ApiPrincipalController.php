@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api\Configuracion\Principal;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoriaServicio;
+use App\Models\Coordenadas;
 use App\Models\DenunciaBasico;
 use App\Models\DenunciaTalaArbol;
 use App\Models\EstadoBasico;
 use App\Models\Informacion;
 use App\Models\NotaServicioBasico;
+use App\Models\ServicioCatastro;
 use App\Models\Servicios;
 use App\Models\Slider;
 use App\Models\SolicitudTalaArbol;
@@ -445,9 +447,14 @@ class ApiPrincipalController extends Controller
                         'nombre' => '',
                         'telefono' => '',
                         'direccion' => '',
-                        'escritura' => 0
+                        'escritura' => 0,
+                        'dui' => '',
+                        'imagen' => ''
                     ];
                 }
+
+                //************************************************************
+
 
                 $arraySoliTala = SolicitudTalaArbol::where('id_usuario', $userToken->id)
                     ->where('visible', 1)
@@ -479,16 +486,22 @@ class ApiPrincipalController extends Controller
                         'nombre' => $dato->nombre,
                         'telefono' => $dato->telefono,
                         'direccion' => $dato->direccion,
-                        'escritura' => $dato->escrituras
+                        'escritura' => $dato->escrituras,
+                        'dui' => '',
+                        'imagen' => $dato->imagen
                     ];
                 }
+
+
+                //************************************************************
+
 
                 $arrayDenunciaTala = DenunciaTalaArbol::where('id_usuario', $userToken->id)
                     ->where('visible', 1)
                     ->orderBy('fecha', 'DESC')
                     ->get();
 
-                foreach ($arraySoliTala as $dato){
+                foreach ($arrayDenunciaTala as $dato){
 
                     // DENUNCIA TALA DE ARBOLES
 
@@ -514,11 +527,61 @@ class ApiPrincipalController extends Controller
                         'nombre' => '',
                         'telefono' => '',
                         'direccion' => '',
-                        'escritura' => 0
+                        'escritura' => 0,
+                        'dui' => '',
+                        'imagen' => $dato->imagen
                     ];
                 }
 
 
+                //************************************************************
+
+
+                $arrayCatastro = ServicioCatastro::where('id_usuario', $userToken->id)
+                    ->where('visible', 1)
+                    ->orderBy('fecha', 'DESC')
+                    ->get();
+
+                foreach ($arrayCatastro as $dato){
+
+                    // DENUNCIA TALA DE ARBOLES
+
+                    // ESTADOS
+                    if($dato->estado == 1){
+                        $estado = "Pendiente de Revisión";
+
+                    }else if($dato->estado == 2){
+                        $estado = "Solvente, Solvencia lista para Retirar";
+
+                    }
+                    else if($dato->estado == 3){
+                        $estado = "Pendiente de Pago, pasar a ventanilla";
+                    }else{
+                        $estado = "";
+                    }
+
+
+                    $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+
+                    $combinedArray[] = [
+                        'id' => $dato->id,
+                        'tipo' => 4,  // identificador que es el Array
+                        'nombretipo' => "Solicitud de Solvencia Catastral",
+                        'estado' => $estado,
+                        'nota' => "",
+                        'fecha' => $fechaFormat,
+                        'nombre' => $dato->nombre,
+                        'telefono' => '',
+                        'direccion' => '',
+                        'escritura' => 0,
+                        'dui' => $dato->dui,
+                        'imagen' => ''
+                    ];
+                }
+
+
+
+                // ORDENAR DATOS
                 usort($combinedArray, function ($a, $b) {
                     return strtotime($b['fecha']) - strtotime($a['fecha']);
                 });
@@ -599,6 +662,68 @@ class ApiPrincipalController extends Controller
             return ['success' => 99];
         }
     }
+
+
+
+    public function registrarSolicitudCatastro(Request $request){
+
+        $rules = array(
+            'id' => 'required',
+            'tiposoli' => 'required',
+            'nombre' => 'required',
+            'dui' => 'required'
+        );
+
+        // latitud, longitud
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        $tokenApi = $request->header('Authorization');
+
+        if ($userToken = JWTAuth::user($tokenApi)) {
+
+            DB::beginTransaction();
+
+            try {
+
+                $fechaHoy = Carbon::now('America/El_Salvador');
+
+                $registro = new ServicioCatastro();
+                $registro->id_usuario = $userToken->id;
+                $registro->fecha = $fechaHoy;
+
+                // 0- Pendiente de revision
+                // 1- solvente, solvencia lista para retirar
+                // 2- pendiente de pago, pasar a ventanilla
+
+                $registro->estado = 0;
+                $registro->nombre = $request->nombre;
+                $registro->dui = $request->dui;
+                $registro->latitud = $request->latitud;
+                $registro->longitud = $request->longitud;
+                $registro->visible = 1;
+                $registro->save();
+
+
+                DB::commit();
+                return ['success' => 1];
+            }catch(\Throwable $e){
+                Log::info("error" . $e);
+                DB::rollback();
+                return ['success' => 99];
+            }
+
+        }else{
+            return ['success' => 99];
+        }
+    }
+
+
+
 
 
 
