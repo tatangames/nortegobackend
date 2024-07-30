@@ -417,9 +417,10 @@ class ApiPrincipalController extends Controller
                     ->orderBy('fecha', 'DESC')
                     ->get();
 
+                $hayDatosBool = false;
 
                 foreach ($arrayBasico as $dato){
-
+                    $hayDatosBool = true;
                     // SOLICITUD BASICA
 
                     // ESTADOS
@@ -462,6 +463,7 @@ class ApiPrincipalController extends Controller
                     ->get();
 
                 foreach ($arraySoliTala as $dato){
+                    $hayDatosBool = true;
                     // SOLICITUD TALA ARBOLES
 
                     // ESTADOS
@@ -502,7 +504,7 @@ class ApiPrincipalController extends Controller
                     ->get();
 
                 foreach ($arrayDenunciaTala as $dato){
-
+                    $hayDatosBool = true;
                     // DENUNCIA TALA DE ARBOLES
 
                     // ESTADOS
@@ -543,8 +545,9 @@ class ApiPrincipalController extends Controller
                     ->get();
 
                 foreach ($arrayCatastro as $dato){
+                    $hayDatosBool = true;
+                    // CATASTRO
 
-                    // DENUNCIA TALA DE ARBOLES
 
                     // ESTADOS
                     if($dato->estado == 1){
@@ -586,8 +589,15 @@ class ApiPrincipalController extends Controller
                     return strtotime($b['fecha']) - strtotime($a['fecha']);
                 });
 
+                $hayDatos = 0;
+
+                if($hayDatosBool){
+                    $hayDatos = 1;
+                }
+
+
                 DB::commit();
-                return ['success' => 1, 'listado' => $combinedArray];
+                return ['success' => 1, 'listado' => $combinedArray, 'haydatos' => $hayDatos];
             }catch(\Throwable $e){
                 Log::info("error" . $e);
                 DB::rollback();
@@ -614,6 +624,9 @@ class ApiPrincipalController extends Controller
         if ($validator->fails()) {
             return ['success' => 0];
         }
+
+        Log::info($request->all());
+
 
         $tokenApi = $request->header('Authorization');
 
@@ -645,6 +658,14 @@ class ApiPrincipalController extends Controller
                     // DENUNCIA TALA DE ARBOL
 
                     DenunciaTalaArbol::where('id', $idFila)
+                        ->update([
+                            'visible' => 0,
+                        ]);
+                }
+                else if($request->tipo == 4){
+                    // CATASTRO
+
+                    ServicioCatastro::where('id', $idFila)
                         ->update([
                             'visible' => 0,
                         ]);
@@ -696,11 +717,11 @@ class ApiPrincipalController extends Controller
                 $registro->id_usuario = $userToken->id;
                 $registro->fecha = $fechaHoy;
 
-                // 0- Pendiente de revision
-                // 1- solvente, solvencia lista para retirar
-                // 2- pendiente de pago, pasar a ventanilla
+                // 1- Pendiente de revision
+                // 2- solvente, solvencia lista para retirar
+                // 3- pendiente de pago, pasar a ventanilla
 
-                $registro->estado = 0;
+                $registro->estado = 1;
                 $registro->nombre = $request->nombre;
                 $registro->dui = $request->dui;
                 $registro->latitud = $request->latitud;

@@ -25,7 +25,6 @@ class SolicitudUsuarioController extends Controller
     // TABLA PARA RED VIAL
     public function tablaSolicitudRedVial(){
 
-
         $listado = DenunciaBasico::where('id_servicio', 1) // RED VIAL
             ->where('estado', 1)
             ->orderBy('fecha', 'DESC')
