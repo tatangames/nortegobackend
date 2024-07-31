@@ -716,6 +716,7 @@ class ApiPrincipalController extends Controller
                 $registro = new ServicioCatastro();
                 $registro->id_usuario = $userToken->id;
                 $registro->fecha = $fechaHoy;
+                $registro->tipo_solicitud = $request->tiposoli;
 
                 // 1- Pendiente de revision
                 // 2- solvente, solvencia lista para retirar

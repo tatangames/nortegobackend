@@ -145,9 +145,15 @@ Route::get('/admin/mediambiente/solicitud-finalizada/talaarbol/tabla', [Solicitu
 Route::get('/admin/mediambiente/denuncia/talaarbol/index', [SolicitudUsuarioController::class,'indexDenunciaTalaArbol'])->name('admin.denuncia.tala.arbol');
 Route::get('/admin/mediambiente/denuncia/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaDenunciaTalaArbol']);
 
+// --- SOLICITUDES DE CATASTRO ---
+Route::get('/admin/catastro/activos/index', [SolicitudUsuarioController::class,'indexCatastroActivas'])->name('admin.catastro.activas');
+Route::get('/admin/catastro/activos/tabla', [SolicitudUsuarioController::class,'tablaCatastroActivas']);
+Route::post('/admin/catastro/solicitud/mapa', [SolicitudUsuarioController::class,'mapaCatastral']);
+Route::post('/admin/catastro/actualizar/estado', [SolicitudUsuarioController::class,'actualizarEstadoCatastral']);
 
-
-
+// --- FINALIZADAS DE CATASTRO ---
+Route::get('/admin/catastro/finalizada/index', [SolicitudUsuarioController::class,'indexCatastroFinalizada'])->name('admin.catastro.finalizadas');
+Route::get('/admin/catastro/finalizada/tabla', [SolicitudUsuarioController::class,'tablaCatastroFinalizada']);
 
 
 

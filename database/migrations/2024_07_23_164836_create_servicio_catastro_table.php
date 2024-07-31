@@ -18,6 +18,8 @@ return new class extends Migration
             $table->dateTime('fecha');
             $table->integer('estado');
 
+            $table->integer('tipo_solicitud');
+
             $table->string('nombre', 100);
             $table->string('dui', 20);
 

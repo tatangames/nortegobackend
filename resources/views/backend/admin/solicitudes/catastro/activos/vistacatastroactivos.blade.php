@@ -54,7 +54,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Tala Arboles</li>
+                    <li class="breadcrumb-item active">Catastro</li>
                 </ol>
             </div>
         </div>
@@ -73,7 +73,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Denuncia Tala de Árbol</h3>
+                    <h3 class="card-title">Solvencia Catastral Pendientes</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -87,24 +87,46 @@
         </div>
     </section>
 
-
-
-    <!--Cuadro modal para el Zoom de las fotos-->
-    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog custom-modal">
-            <!--Contenido-->
+    <!-- modal editar -->
+    <div class="modal fade" id="modalEditar">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-body mb-0 p-0">
-                    <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
-                        <img id="imgModal" src="" class="embed-responsive-item" alt="">
-                    </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Estado</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-editar">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+
+                                    <div class="form-group">
+                                        <input type="hidden" id="id-editar"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Respuesta</label>
+                                        <select class="form-control" id="select-cambiar">
+                                            <option value="2">Solvente, Solvencia lista para retirar</option>
+                                            <option value="3">Pendiente de Pago, pasar a ventanilla</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="modal-footer justify-content-center">
-                    <button class="btn btn-primary btn-anis ml-0" data-dismiss="modal">Cerrar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="actualizarEstado()">Actualizar</button>
                 </div>
             </div>
-            <!--Fin Contenido-->
         </div>
     </div>
 
@@ -126,7 +148,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/mediambiente/denuncia/talaarbol/tabla') }}";
+            var ruta = "{{ URL::to('/admin/catastro/activos/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             countdown();
@@ -137,7 +159,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/mediambiente/denuncia/talaarbol/tabla') }}";
+            var ruta = "{{ URL::to('/admin/catastro/activos/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -184,7 +206,7 @@
             var formData = new FormData();
             formData.append('id', id);
 
-            axios.post('/admin/mediambiente/solicitud/mapa', formData, {
+            axios.post('/admin/catastro/solicitud/mapa', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -207,10 +229,45 @@
         }
 
 
-        function getPath(img) {
-            atributo = img.getAttribute("src");
-            document.getElementById("imgModal").setAttribute("src", atributo);
+        function modalInformacion(id){
+            let miSelect = document.getElementById('select-cambiar');
+                miSelect.options.selectedIndex = 0;
+
+            $('#id-editar').val(id);
+            $('#modalEditar').modal('show');
         }
+
+
+        function actualizarEstado(){
+
+            var id = document.getElementById('id-editar').value;
+            var estado = document.getElementById('select-cambiar').value;
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+            formData.append('estado', estado);
+
+            axios.post('/admin/catastro/actualizar/estado', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Actualizado')
+                        $('#modalEditar').modal('hide');
+                        recargar();
+                    }
+                    else {
+                        toastr.error('Error al editar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al editar');
+                    closeLoading();
+                });
+        }
+
 
 
     </script>

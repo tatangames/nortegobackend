@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Solicitud;
 use App\Http\Controllers\Controller;
 use App\Models\DenunciaBasico;
 use App\Models\DenunciaTalaArbol;
+use App\Models\ServicioCatastro;
 use App\Models\SolicitudTalaArbol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -563,6 +564,119 @@ class SolicitudUsuarioController extends Controller
         return view('backend.admin.solicitudes.medioambiente.denuncias.tabladenunciatalaarbol', compact('listado'));
     }
 
+
+
+    //**********************************************************************
+
+
+    public function indexCatastroActivas()
+    {
+        return view('backend.admin.solicitudes.catastro.activos.vistacatastroactivos');
+    }
+
+    public function tablaCatastroActivas()
+    {
+        $listado = ServicioCatastro::where('estado', 1) // pendiente
+            ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($listado as $dato){
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
+
+            $tiposolicitud = "";
+            if($dato->tipo_solicitud == 1){
+                $tiposolicitud = "Solvencia de Inmueble";
+            }else if($dato->tipo_solicitud == 2){
+                $tiposolicitud = "Solvencia de Empresa";
+            }
+
+            $dato->tiposolicitud = $tiposolicitud;
+        }
+
+        return view('backend.admin.solicitudes.catastro.activos.tablacatastroactivos', compact('listado'));
+    }
+
+
+    public function mapaCatastral(Request $request){
+
+        $infoNotaSer = SolicitudTalaArbol::where('id', $request->id)->first();
+
+        if($infoNotaSer->latitud != null && $infoNotaSer->longitud != null){
+
+            $latitude = $infoNotaSer->latitud;
+            $longitude = $infoNotaSer->longitud;
+
+            $googleMapsUrl = "https://www.google.com/maps?q={$latitude},{$longitude}";
+            return ['success' => 1, 'url' => $googleMapsUrl];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function actualizarEstadoCatastral(Request $request)
+    {
+        $rules = array(
+            'id' => 'required',
+            'estado' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return ['success' => 0];
+        }
+
+        ServicioCatastro::where('id', $request->id)
+            ->update([
+                'estado' => $request->estado,
+            ]);
+
+        return ['success' => 1];
+    }
+
+
+
+    //******************************************************
+
+
+    public function indexCatastroFinalizada()
+    {
+        return view('backend.admin.solicitudes.catastro.finalizado.vistacatastrofinalizados');
+    }
+
+    public function tablaCatastroFinalizada()
+    {
+        $listado = ServicioCatastro::where('estado', '!=', 1) // pendiente
+        ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($listado as $dato){
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
+
+            $tiposolicitud = "";
+            if($dato->tipo_solicitud == 1){
+                $tiposolicitud = "Solvencia de Inmueble";
+            }else if($dato->tipo_solicitud == 2){
+                $tiposolicitud = "Solvencia de Empresa";
+            }
+
+            $dato->tiposolicitud = $tiposolicitud;
+
+            $estadoFinal = "";
+
+            if($dato->estado == 2){
+                $estadoFinal = "Solvente, Solvencia lista para retirar";
+            }else if($dato->estado == 3){
+                $estadoFinal = "Pendiente de Pago, pasar a ventanilla";
+            }
+
+
+            $dato->estadofinal = $estadoFinal;
+        }
+
+        return view('backend.admin.solicitudes.catastro.finalizado.tablacatastrofinalizados', compact('listado'));
+    }
 
 
 

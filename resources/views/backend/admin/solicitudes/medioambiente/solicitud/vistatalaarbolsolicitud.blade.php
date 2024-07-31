@@ -54,7 +54,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Alumbrado Eléctrico</li>
+                    <li class="breadcrumb-item active">Tala Arboles</li>
                 </ol>
             </div>
         </div>
