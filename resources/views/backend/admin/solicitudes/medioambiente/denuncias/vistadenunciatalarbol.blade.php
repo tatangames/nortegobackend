@@ -54,7 +54,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Tala Arboles</li>
+                    <li class="breadcrumb-item active">Tala Arboles - Denuncias Activas</li>
                 </ol>
             </div>
         </div>
@@ -122,6 +122,7 @@
     <script src="{{ asset('js/axios.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(document).ready(function(){

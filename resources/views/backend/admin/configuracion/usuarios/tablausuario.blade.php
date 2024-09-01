@@ -9,6 +9,7 @@
                             <tr>
                                 <th>Fecha Registro</th>
                                 <th>Número</th>
+                                <th>Código</th>
                                 <th>Activo</th>
                                 <th>Verificado</th>
                                 <th>Conteo SMS</th>
@@ -21,7 +22,7 @@
                                 <tr>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->telefono }}</td>
-
+                                    <td>{{ $dato->codigo }}</td>
                                     <td>
                                         @if($dato->activo == 1)
                                             <span class="badge bg-success">Activo</span>

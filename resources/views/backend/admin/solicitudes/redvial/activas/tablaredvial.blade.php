@@ -28,10 +28,10 @@
                                     <td>{{ $dato->horaFormat }}</td>
                                     <td>{{ $dato->nota }}</td>
 
-                                    <td>
+                                    <td style="text-align: center">
                                         <div class="col-md-12 animate-box">
                                             <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">
-                                        </div>                                    </td>
+                                        </div>
                                     <td>
 
                                         <button type="button" class="btn btn-success btn-xs" onclick="modalFinalizar({{ $dato->id }})">
@@ -70,7 +70,7 @@
             "info": true,
             "autoWidth": false,
             "pagingType": "full_numbers",
-            "lengthMenu": [[10, 25, 50, 100, 150, -1], [10, 25, 50, 100, 150, "Todo"]],
+            "lengthMenu": [[100, 150, -1], [100, 150, "Todo"]],
             "language": {
 
                 "sProcessing": "Procesando...",

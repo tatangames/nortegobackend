@@ -172,6 +172,19 @@
                                         </label>
                                     </div>
 
+                                    <div class="form-group" id="contenedorgps" style="display: none">
+                                        <label>Bloqueo GPS</label>
+                                        <br>
+                                        <label class="switch" style="margin-top:10px">
+                                            <input type="checkbox" id="togglegps">
+                                            <div class="slider round">
+                                                <span class="on">Activo</span>
+                                                <span class="off">Inactivo</span>
+                                            </div>
+                                        </label>
+                                    </div>
+
+
                                     <div class="form-group">
                                         <label>Imagen (Ejemplo 600px X -)</label>
                                         <div class="col-md-10">
@@ -303,6 +316,24 @@
                             $("#toggle").prop("checked", false);
                         }
 
+                        const divGPS = document.getElementById('contenedorgps');
+
+                        // ID DE ALGUNOS SERVICIOS PARA MODIFICAR SI TIENE BLOQUEO GPS,
+                        // COMO DENUNCIAS BASICAS DE BACHES O ALUMBRADO ELECTRICO
+                        const array1 = [1,2,6];
+                        const isAvailable = array1.includes(id);
+
+                        if(response.data.info.bloqueo_gps === 1){
+                            $("#togglegps").prop("checked", true);
+                        }else{
+                            $("#togglegps").prop("checked", false);
+                        }
+                        if (isAvailable) {
+                            divGPS.style.display = 'block';
+                        }else{
+                            divGPS.style.display = 'none';
+                        }
+
                         // MOVER EL SELECT AL TIPO DE SERVICIO
 
                         let idpos = response.data.info.tiposervicio;
@@ -366,6 +397,18 @@
                 }
             }
 
+
+            var actualizarBloqueo = 0;
+            var toggleGps = 0;
+
+            // VERIFICAR SI ACTUALIZARA TOOGLE GPS BLOQUEO
+            const myDiv = document.getElementById('contenedorgps');
+            if (myDiv.style.display === 'block') {
+                actualizarBloqueo = 1;
+                let t2 = document.getElementById('togglegps').checked;
+                toggleGps = t2 ? 1 : 0;
+            }
+
             openLoading();
             var formData = new FormData();
             formData.append('id', id);
@@ -374,6 +417,9 @@
             formData.append('idcategoria', idCategoria);
             formData.append('idtipo', idtipo);
             formData.append('toggle', toggle);
+            formData.append('actualizargps', actualizarBloqueo);
+            formData.append('togglegps', toggleGps);
+
             formData.append('imagen', imagen.files[0]);
 
             axios.post('/admin/servicios/editar', formData, {

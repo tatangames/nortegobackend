@@ -91,6 +91,7 @@ class SolicitudUsuarioController extends Controller
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
             <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
+            DISTRITO SANTA ANA NORTE<br>
             NorteGo <br>
             Reporte Red Viales
             </div>";
@@ -227,6 +228,7 @@ class SolicitudUsuarioController extends Controller
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
             <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
+            DISTRITO SANTA ANA NORTE<br>
             NorteGo <br>
             Reporte Alumbrado Eléctrico
             </div>";
@@ -314,7 +316,7 @@ class SolicitudUsuarioController extends Controller
     }
 
     public function tablaSolicitudDesechos(){
-        $listado = DenunciaBasico::where('id_servicio', 3) // DESECHOS
+        $listado = DenunciaBasico::where('id_servicio', 8) // DESECHOS
         ->where('estado', 1)
         ->orderBy('fecha', 'DESC')
         ->get();
@@ -363,6 +365,7 @@ class SolicitudUsuarioController extends Controller
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
             <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
+            DISTRITO SANTA ANA NORTE<br>
             NorteGo <br>
             Reporte Desechos Solidos
             </div>";
@@ -424,7 +427,7 @@ class SolicitudUsuarioController extends Controller
 
     public function tablaSolicitudDesechosFinalizada(){
 
-        $listado = DenunciaBasico::where('id_servicio', 3) // DESECHOS SOLIDOS
+        $listado = DenunciaBasico::where('id_servicio', 8) // DESECHOS SOLIDOS
             ->where('estado', 2)
             ->orderBy('fecha', 'DESC')
             ->get();

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('visible');
             $table->integer('estado');
 
+
             $table->foreign('id_usuario')->references('id')->on('usuarios');
             $table->foreign('id_servicio')->references('id')->on('servicio');
         });

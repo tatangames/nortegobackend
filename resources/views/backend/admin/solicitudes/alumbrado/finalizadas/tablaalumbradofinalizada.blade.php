@@ -28,7 +28,7 @@
                                     <td>{{ $dato->horaFormat }}</td>
                                     <td>{{ $dato->nota }}</td>
 
-                                    <td>
+                                    <td style="text-align: center">
                                         <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="125px" height="125px" /></center>
                                     </td>
                                     <td>

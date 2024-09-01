@@ -26,7 +26,7 @@
                                     <td>{{ $dato->telefono }}</td>
                                     <td>{{ $dato->direccion }}</td>
 
-                                    <td>
+                                    <td style="text-align: center">
 
                                         <div class="col-md-12 animate-box">
                                             <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">

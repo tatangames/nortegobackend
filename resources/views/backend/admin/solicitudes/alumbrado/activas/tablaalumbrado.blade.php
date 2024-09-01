@@ -28,11 +28,13 @@
                                     <td>{{ $dato->horaFormat }}</td>
                                     <td>{{ $dato->nota }}</td>
 
-                                    <td>
-                                        <center><img alt="logo" src="{{ url('storage/archivos/'.$dato->imagen) }}"  width="125px" height="125px" /></center>
+                                    <td style="text-align: center">
+                                        <div class="col-md-12 animate-box">
+                                            <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">
+                                        </div>
                                     </td>
-                                    <td>
 
+                                    <td>
                                         <button type="button" class="btn btn-success btn-xs" onclick="modalFinalizar({{ $dato->id }})">
                                             <i class="fas fa-check" title="Finalizar"></i>&nbsp; Finalizar
                                         </button>

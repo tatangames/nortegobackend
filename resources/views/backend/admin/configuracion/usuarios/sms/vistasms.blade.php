@@ -14,7 +14,6 @@
     }
 </style>
 
-
 <div id="divcontenedor" style="display: none">
 
     <section class="content-header">
@@ -37,7 +36,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Listado</h3>
+                    <h3 class="card-title">Listado Reintento SMS</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -65,6 +64,7 @@
     <script src="{{ asset('js/axios.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(document).ready(function(){

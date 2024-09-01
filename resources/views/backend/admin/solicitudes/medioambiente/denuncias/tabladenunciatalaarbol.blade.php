@@ -22,8 +22,7 @@
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nota }}</td>
 
-                                    <td>
-
+                                    <td style="text-align: center">
                                         <div class="col-md-12 animate-box">
                                             <img class="img-responsive img-fluid" src="{{ asset('storage/archivos/'.$dato->imagen)}}" alt="Imagen" data-toggle="modal" width="125px" height="125px" data-target="#modal1" onclick="getPath(this)">
                                         </div>
@@ -56,19 +55,7 @@
 <script>
     $(function () {
 
-        // Añadir el tipo de datos personalizado para fechas en formato d-m-y
-        $.fn.dataTable.ext.type.order['date-dmy-pre'] = function (d) {
-            // Divide la fecha por el guion
-            var parts = d.split('-');
-            // Retorna en formato YYYYMMDD
-            return parts[2] + parts[1] + parts[0];
-        };
-
-
         $("#tabla").DataTable({
-            columnDefs: [
-                { type: 'date-dmy', targets: 0 } // La columna de fecha es la primera (índice 0)
-            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -78,7 +65,6 @@
             "pagingType": "full_numbers",
             "lengthMenu": [[10, 25, 50, 100, 150, -1], [10, 25, 50, 100, 150, "Todo"]],
             "language": {
-
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
@@ -86,7 +72,6 @@
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
                 "sSearch": "Buscar:",
                 "sUrl": "",
                 "sInfoThousands": ",",
@@ -101,9 +86,21 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-
             },
-            "responsive": true, "lengthChange": true, "autoWidth": false,
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "columnDefs": [
+                {
+                    "targets": 0, // La columna de fechas
+                    "render": function(data, type, row) {
+                        if (type === 'sort' || type === 'type') {
+                            return moment(data, 'DD-MM-YYYY hh:mm A').format('YYYYMMDDHHmm');
+                        }
+                        return data;
+                    }
+                }
+            ]
         });
     });
 

@@ -31,10 +31,10 @@
 
 <script>
     $(function () {
+
+        /*ORDENADA DE FECHAS CON moment.js*/
+
         $("#tabla").DataTable({
-            columnDefs: [
-                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
-            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -44,7 +44,6 @@
             "pagingType": "full_numbers",
             "lengthMenu": [[10, 25, 50, 100, 150, -1], [10, 25, 50, 100, 150, "Todo"]],
             "language": {
-
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
@@ -52,7 +51,6 @@
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
                 "sSearch": "Buscar:",
                 "sUrl": "",
                 "sInfoThousands": ",",
@@ -67,11 +65,25 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-
             },
-            "responsive": true, "lengthChange": true, "autoWidth": false,
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "columnDefs": [
+                {
+                    "targets": 0, // La columna de fechas
+                    "render": function(data, type, row) {
+                        if (type === 'sort' || type === 'type') {
+                            return moment(data, 'DD-MM-YYYY hh:mm A').format('YYYYMMDDHHmm');
+                        }
+                        return data;
+                    }
+                }
+            ]
         });
-    });
 
+
+
+    });
 
 </script>

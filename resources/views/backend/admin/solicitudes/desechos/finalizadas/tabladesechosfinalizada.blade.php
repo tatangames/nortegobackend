@@ -7,7 +7,6 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 6%">Reporte</th>
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Nota</th>
@@ -19,11 +18,7 @@
 
                             @foreach($listado as $dato)
                                 <tr data-info="{{ $dato->id }}">
-                                    <td style="width: 6%">
 
-                                        <input type="checkbox" class="checkbox" style="width: 40px; height: 20px" />
-
-                                    </td>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->horaFormat }}</td>
                                     <td>{{ $dato->nota }}</td>

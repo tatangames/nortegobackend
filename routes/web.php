@@ -13,13 +13,6 @@ use App\Http\Controllers\Backend\Configuracion\Servicios\ServiciosController;
 use App\Http\Controllers\Backend\Solicitud\SolicitudUsuarioController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-
 Route::get('/', [LoginController::class,'index'])->name('login');
 
 Route::post('/login', [LoginController::class, 'login']);
@@ -124,7 +117,7 @@ Route::get('/admin/solicitud/alumbradofinalizada/tabla', [SolicitudUsuarioContro
 Route::get('/admin/solicitud/desechos/index', [SolicitudUsuarioController::class,'indexSolicitudDesechos'])->name('admin.solicitud.desechos.activa.index');
 Route::get('/admin/solicitud/desechos/tabla', [SolicitudUsuarioController::class,'tablaSolicitudDesechos']);
 Route::post('/admin/solicitud/desechos/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudDesechos']);
-Route::get('/admin/solicitud/desechos/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfAlumbradoDesechos']);
+Route::get('/admin/solicitud/desechos/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfDesechosVarios']);
 
 // --- SOLICITUDES DE DESECHOS SOLIDOS - FINALIZADA ---
 Route::get('/admin/solicitud/desechosfinalizada/index', [SolicitudUsuarioController::class,'indexSolicitudDesechosFinalizada'])->name('admin.solicitud.desechos.finalizada.index');

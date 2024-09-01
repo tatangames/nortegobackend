@@ -40,7 +40,7 @@
         <div class="container-fluid">
             <div class="card card-gray-dark">
                 <div class="card-header">
-                    <h3 class="card-title">Listado</h3>
+                    <h3 class="card-title">Listado de Imagenes Slider</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -71,7 +71,7 @@
 
                                     <div class="form-group">
                                         <label>Descripción (Opcional)</label>
-                                        <input style="color:#191818" type="text" id="descripcion-nuevo" class="form-control" maxlength="200" />
+                                        <input style="color:#191818" type="text" autocomplete="off" id="descripcion-nuevo" class="form-control" maxlength="200" />
                                     </div>
 
                                     <div class="form-group">
@@ -116,7 +116,7 @@
 
                                     <div class="form-group">
                                         <label>Descripción (Opcional)</label>
-                                        <input style="color:#191818" type="text" id="descripcion-editar" class="form-control" maxlength="200" />
+                                        <input style="color:#191818" type="text" autocomplete="off" id="descripcion-editar" class="form-control" maxlength="200" />
                                     </div>
 
 

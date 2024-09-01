@@ -33,10 +33,6 @@
 
 
 
-        <button type="button" style="margin: 10px" onclick="checkReporte()" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus-square"></i>
-            Reporte
-        </button>
 
     </section>
 

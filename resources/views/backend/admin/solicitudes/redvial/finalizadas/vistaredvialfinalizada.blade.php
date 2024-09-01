@@ -26,7 +26,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Red Vial</li>
+                    <li class="breadcrumb-item active">Red Vial Finalizadas</li>
                 </ol>
             </div>
         </div>

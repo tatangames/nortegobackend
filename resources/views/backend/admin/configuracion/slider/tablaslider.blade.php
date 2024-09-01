@@ -8,7 +8,7 @@
                         <thead>
                         <tr>
                             <th>Posición</th>
-                            <th>Descripción</th>
+                            <th>Descripción (Opcional)</th>
                             <th>Estado</th>
                             <th>Imagen</th>
 

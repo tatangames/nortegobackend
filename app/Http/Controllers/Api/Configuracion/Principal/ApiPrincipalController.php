@@ -38,7 +38,7 @@ class ApiPrincipalController extends Controller
         if ($userToken = JWTAuth::user($tokenApi)) {
 
             // USUARIO BLOQUEADO
-            if($userToken->activo == 0){
+            if ($userToken->activo == 0) {
                 return ['success' => 1];
             }
 
@@ -51,15 +51,6 @@ class ApiPrincipalController extends Controller
                 $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
                 $infoApp = Informacion::where('id', 1)->first();
 
-                // VERIFICAR QUE EL CODIGO DE COMPILACION - ANDROID
-                $newUpdateAndroid = 0;
-                // SI ES -1 LA APP NO PUDO OBTENER EL IDENTIFICADOR
-                if($request->codeapp != null && $request->codeapp != -1){
-                    // COMPARAR VERSION
-                    if($request->codeapp != $infoApp->code_android){
-                        $newUpdateAndroid = 1;
-                    }
-                }
 
                 $resultsBloque = array();
                 $index = 0;
@@ -68,8 +59,8 @@ class ApiPrincipalController extends Controller
                     ->where('activo', 1)
                     ->get();
 
-                foreach ($arrayTipoServicio as $secciones){
-                    array_push($resultsBloque,$secciones);
+                foreach ($arrayTipoServicio as $secciones) {
+                    array_push($resultsBloque, $secciones);
 
                     $subSecciones = Servicios::where('id_cateservicio', $secciones->id)
                         ->where('activo', 1) // para inactivarlo solo para administrador
@@ -81,13 +72,13 @@ class ApiPrincipalController extends Controller
                 }
 
 
-
                 return ['success' => 2,
-                    'codeandroid' => $newUpdateAndroid,
+                    'codeandroid' => $infoApp->code_android,
+                    'codeiphone' => $infoApp->code_ios,
                     'slider' => $arraySlider,
                     'tiposervicio' => $arrayTipoServicio];
 
-            }catch(\Throwable $e){
+            } catch (\Throwable $e) {
                 Log::info("error" . $e);
                 DB::rollback();
                 return ['success' => 99];
@@ -122,38 +113,44 @@ class ApiPrincipalController extends Controller
 
             // *** VERIFICAR SI ES PERMITIDO DENTRO DEL RANGO ***
 
-           if($request->latitud != null && $request->longitud != null){
+            $infoServicio = Servicios::where('id', $request->idservicio)->first();
 
-               // DEL MISMO SERVICIO, QUE ESTAN ACTIVAS
-               $arrayNotaServicio = DenunciaBasico::where('id_servicio', $request->idservicio)
-                    ->where('estado', 1)
-                   ->get();
+            // SE VERIFICA RANGO DE X METROS
+            if($infoServicio->bloqueo_gps == 1){
+                if($request->latitud != null && $request->longitud != null){
 
-               // VERIFICAR COORDENADAS SI ESTAN DENTRO DEL MISMO RANGO
+                    // DEL MISMO SERVICIO, QUE ESTAN ACTIVAS
+                    $arrayNotaServicio = DenunciaBasico::where('id_servicio', $request->idservicio)
+                        ->where('estado', 1)
+                        ->get();
 
-               foreach ($arrayNotaServicio as $dato){
+                    // VERIFICAR COORDENADAS SI ESTAN DENTRO DEL MISMO RANGO
 
-                   $latitudeFrom = $dato->latitud;
-                   $longitudeFrom = $dato->longitud;
-                   $latitudeTo = $request->latitud;
-                   $longitudeTo = $request->longitud;
+                    foreach ($arrayNotaServicio as $dato){
 
-                   // Verificar si están dentro del rango
-                   $isWithinRange = $this->isWithinRange($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo);
+                        $latitudeFrom = $dato->latitud;
+                        $longitudeFrom = $dato->longitud;
+                        $latitudeTo = $request->latitud;
+                        $longitudeTo = $request->longitud;
 
-                   // Conocer la distancia
-                   //'distance' => $this->haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
+                        // Verificar si están dentro del rango
+                        $isWithinRange = $this->isWithinRange($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo);
+
+                        // Conocer la distancia
+                        //'distance' => $this->haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
 
 
-                   if($isWithinRange){
+                        if($isWithinRange){
 
-                       $titulo = "Nota";
-                       $mensaje = "Hay una Solicitud Pendiente en su Ubicación";
+                            $titulo = "Nota";
+                            $mensaje = "Hay una Solicitud Pendiente en su Ubicación";
 
-                       return ['success' => 1, 'titulo' => $titulo, "mensaje" => $mensaje];
-                   }
-               }
-           }
+                            return ['success' => 1, 'titulo' => $titulo, "mensaje" => $mensaje];
+                        }
+                    }
+                }
+            }
+
 
             if ($request->hasFile('imagen')) {
 
@@ -597,7 +594,7 @@ class ApiPrincipalController extends Controller
 
 
                 DB::commit();
-                return ['success' => 1, 'listado' => $combinedArray, 'haydatos' => $hayDatos];
+                return ['success' => 1, 'haydatos' => $hayDatos, 'listado' => $combinedArray];
             }catch(\Throwable $e){
                 Log::info("error" . $e);
                 DB::rollback();
@@ -625,7 +622,6 @@ class ApiPrincipalController extends Controller
             return ['success' => 0];
         }
 
-        Log::info($request->all());
 
 
         $tokenApi = $request->header('Authorization');
@@ -740,6 +736,7 @@ class ApiPrincipalController extends Controller
             }
 
         }else{
+            Log::info("token no encontrado");
             return ['success' => 99];
         }
     }

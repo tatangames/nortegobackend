@@ -73,7 +73,7 @@
 
             openLoading();
 
-            axios.post('/admin/tiposervicios/posicion',  {
+            axios.post('/admin/categoria/posicion',  {
                 'order': order
             })
                 .then((response) => {

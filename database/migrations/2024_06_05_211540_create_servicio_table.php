@@ -23,6 +23,10 @@ return new class extends Migration
             $table->boolean('activo');
             $table->integer('posicion');
 
+
+            // EJEMPLO UNA DENUNCIA DE BACHE, SE TOMA ALREDEDOR X METROS A LA ZONA
+            $table->boolean('bloqueo_gps');
+
             $table->foreign('id_cateservicio')->references('id')->on('categoria_servicio');
         });
     }

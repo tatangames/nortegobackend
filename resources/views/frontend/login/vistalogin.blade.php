@@ -78,12 +78,12 @@
                         </div>
                         <div class="p-5 bg-white rounded shadow-lg">
                             <h3 class="mb-2 text-center pt-5"><strong>Alcaldía Municipal de Metapán</strong></h3>
-                            <p class="text-center lead">Santa Ana Norte App</p>
+                            <p class="text-center lead">Distrito Santa Ana Norte App</p>
                             <form>
                                 <label style="margin-top: 10px" class="font-500">Usuario</label>
-                                <input class="form-control form-control-lg mb-3" id="usuario" autocomplete="off" type="text">
+                                <input class="form-control form-control-lg mb-3" id="usuario" maxlength="50" autocomplete="off" type="text">
                                 <label class="font-500">Contraseña</label>
-                                <input class="form-control form-control-lg" id="password" type="password">
+                                <input class="form-control form-control-lg" id="password" maxlength="30" type="password" autocomplete="off">
 
                                 <input type="button" value="Entrar" style="margin-top: 35px" onclick="login()" class="btn btn-primary btn-lg w-100 shadow-lg">
                             </form>

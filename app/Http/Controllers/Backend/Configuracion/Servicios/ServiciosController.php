@@ -23,18 +23,13 @@ class ServiciosController extends Controller
 
 
     public function indexTipoServicios(){
-
         return view('backend.admin.configuracion.tiposervicio.vistatiposervicio');
     }
 
-
     public function tablaTipoServicios(){
         $listado = CategoriaServicio::orderBy('posicion', 'ASC')->get();
-
         return view('backend.admin.configuracion.tiposervicio.tablatiposervicio',compact('listado'));
     }
-
-
 
     public function nuevoTipoServicios(Request $request){
 
@@ -58,7 +53,7 @@ class ServiciosController extends Controller
 
             $registro = new CategoriaServicio();
             $registro->nombre = $request->nombre;
-            $registro->activo = 1;
+            $registro->activo = 0;
             $registro->posicion = $nuevaPosicion;
             $registro->save();
 
@@ -206,6 +201,7 @@ class ServiciosController extends Controller
                     $registro->imagen = $nombreFoto;
                     $registro->tiposervicio = $request->idtiposervicio;
                     $registro->id_cateservicio = $request->id_cateservicio;
+                    $registro->bloqueo_gps = 0;
                     $registro->save();
 
                     DB::commit();
@@ -270,7 +266,9 @@ class ServiciosController extends Controller
             'id' => 'required',
             'toggle' => 'required',
             'idtipo' => 'required',
-            'idcategoria' => 'required'
+            'idcategoria' => 'required',
+            'actualizargps' => 'required',
+            'togglegps' => 'required'
         );
 
         $validator = Validator::make($request->all(), $rules);
@@ -307,6 +305,13 @@ class ServiciosController extends Controller
                         'activo' => $request->toggle,
                     ]);
 
+                if($request->actualizargps == 1){
+                    Servicios::where('id', $request->id)
+                        ->update([
+                            'bloqueo_gps' => $request->togglegps,
+                        ]);
+                }
+
                 if(Storage::disk('archivos')->exists($imagenOld)){
                     Storage::disk('archivos')->delete($imagenOld);
                 }
@@ -325,6 +330,14 @@ class ServiciosController extends Controller
                     'descripcion' => $request->descripcion,
                     'activo' => $request->toggle,
                 ]);
+
+            if($request->actualizargps == 1){
+                Servicios::where('id', $request->id)
+                    ->update([
+                        'bloqueo_gps' => $request->togglegps,
+                    ]);
+            }
+
 
             return ['success' => 1];
         }

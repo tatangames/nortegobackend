@@ -14,14 +14,15 @@ br[style] {
 #titulo{
     text-align: center;
     font-size: 17px;
-    font-weight: bold;"
+    font-weight: bold;
+    margin-right: 20px;
 }
 
 #logo{
-    float: right;
+    float: left;
     height : 93px;
-    width : 76px;
-    margin-right: 20px;
+    width : 84px;
+    margin-left: 20px;
 }
 
 #tablaFor {

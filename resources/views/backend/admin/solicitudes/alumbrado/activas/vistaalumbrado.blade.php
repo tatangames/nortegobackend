@@ -12,6 +12,32 @@
         /*Ajustar tablas*/
         table-layout:fixed;
     }
+
+    .custom-modal {
+        max-width: 1000px;
+    }
+
+    .custom-modal .modal-content {
+        height: 600px;
+    }
+
+    .custom-modal .modal-body {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .custom-modal .modal-body .embed-responsive {
+        width: 100%;
+        height: 100%;
+    }
+
+    .custom-modal .modal-body .embed-responsive-item {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Cambia a 'cover' si prefieres que la imagen cubra todo el espacio */
+    }
 </style>
 
 
@@ -29,7 +55,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">Listado</li>
-                    <li class="breadcrumb-item active">Alumbrado Eléctrico</li>
+                    <li class="breadcrumb-item active">Alumbrado Eléctrico Activos</li>
                 </ol>
             </div>
         </div>
@@ -60,6 +86,25 @@
             </div>
         </div>
     </section>
+
+    <!--Cuadro modal para el Zoom de las fotos-->
+    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog custom-modal">
+            <!--Contenido-->
+            <div class="modal-content">
+                <div class="modal-body mb-0 p-0">
+                    <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+                        <img id="imgModal" src="" class="embed-responsive-item" alt="">
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button class="btn btn-primary btn-anis ml-0" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+            <!--Fin Contenido-->
+        </div>
+    </div>
 
 </div>
 
@@ -215,6 +260,10 @@
                 });
         }
 
+        function getPath(img) {
+            atributo = img.getAttribute("src");
+            document.getElementById("imgModal").setAttribute("src", atributo);
+        }
 
     </script>
 

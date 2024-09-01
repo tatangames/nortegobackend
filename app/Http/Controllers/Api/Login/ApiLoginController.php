@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Login;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConteoIngresoCodigo;
 use App\Models\ReintentoSms;
 use App\Models\Usuario;
 use Carbon\Carbon;
@@ -36,7 +37,7 @@ class ApiLoginController extends Controller
             // QUITAR ESPACIOS QUE VIENEN DEL NUMERO
             $telefono = str_replace(' ', '', $request->telefono);
 
-            // GENERAR CODIGO
+            // GENERAR CODIGO DE 6 DIGITOS
             $codigo = '';
             for($i = 0; $i < 6; $i++) {
                 $codigo .= mt_rand(0, 9);
@@ -75,6 +76,14 @@ class ApiLoginController extends Controller
                 if ($puedeReenviarSMS == 1) {
 
                     //******* AQUI SE ENVIA SMS ***********
+                    // Si falla el envio, se hace un return de error
+
+
+
+
+                    //******* AQUI SE FINALIZA ENVIO SMS ***********
+
+
 
                     $detaRe = new ReintentoSms();
                     $detaRe->id_usuarios = $infoUsuario->id;
@@ -90,11 +99,14 @@ class ApiLoginController extends Controller
                         ]);
                 }
 
+                $segundosIphone = $secondsToWait;
+
                 // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
                 $secondsToWait = $secondsToWait * 1000;
 
                 DB::commit();
-                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
+                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait,
+                    'segundosiphone' => $segundosIphone];
             } else {
 
                 // CUANDO EL TELEFONO A REGISTRAR ES NUEVO, SI ES UN NUMERO ERRONEO, NO GUARDARA NADA
@@ -117,6 +129,13 @@ class ApiLoginController extends Controller
 
 
                 //******* AQUI SE ENVIA SMS ***********
+                // Si falla el envio, se hace un return de error
+
+
+
+
+                //******* AQUI SE FINALIZA ENVIO SMS ***********
+
 
                 $detaRe = new ReintentoSms();
                 $detaRe->id_usuarios = $registro->id;
@@ -125,11 +144,15 @@ class ApiLoginController extends Controller
                 $detaRe->save();
 
                 //************************************
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
+
+                $segundosIphone = 25;
+
+                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL SOLO ANDROID
                 $limiteSegundosSMS = $limiteSegundosSMS * 1000;
 
                 DB::commit();
-                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
+                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS,
+                    'segundosiphone' => $segundosIphone];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -156,70 +179,55 @@ class ApiLoginController extends Controller
 
         try {
 
-            // SEGUNDOS A ESPERAR
-            $limiteSegundosSMS = 20;
-
+            // EN ANDROID O IPHONE PUEDE VENIR CON ESPACIOS, AQUI SE QUITARAN
             $telefono = str_replace(' ', '', $request->telefono);
+
 
             if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
 
-                // usuario inactivo
+                // Usuario inactivo
                 if($infoUsuario->activo == 0){
                     return ['success' => 1];
                 }
 
                 // FECHA DEL SERVIDOR
-                $currentDate = Carbon::now('America/El_Salvador');
-
-                // DIFERENCIA EN SEGUNDOS ENTRE LA FECHA ACTUAL DEL SERVIDOR Y LA FECHA DEL ULTIMO INTENTO SMS
-                $secondsSinceLastAttempt = $currentDate->diffInSeconds($infoUsuario->fechareintento);
-
-                // VERIFICAR SI HAN PASADO AL MENOS X SEGUNDOS
-                $puedeReenviarSMS = 0;
-                $secondsToWait = 0;
-
-                if($secondsSinceLastAttempt >= $limiteSegundosSMS){
-                    $puedeReenviarSMS = 1;
-                }else{
-                    // CALCULAR EL TIEMPO RESTANTE (CRONOMETRO), SI AUN NO SE PUEDE REENVIAR SMS
-                    $secondsToWait = $limiteSegundosSMS - $secondsSinceLastAttempt;
-                }
-
-                // CERO, SE SETEA AL TIEMPO X DE ESPERA DE SEGUNDOS PARA EL CRONOMETRO EN LA APP
-                if($secondsToWait <= 0){
-                    $secondsToWait = $limiteSegundosSMS;
-                }
-
+                $fechaServidor = Carbon::now('America/El_Salvador');
 
                 //******* AQUI SE ENVIA SMS ***********
-
-                if ($puedeReenviarSMS) {
-                    $detaRe = new ReintentoSms();
-                    $detaRe->id_usuarios = $infoUsuario->id;
-                    $detaRe->fecha = $currentDate;
-                    $detaRe->tipo = 3;
-                    $detaRe->save();
-
-                    Usuario::where('id', $infoUsuario->id)
-                        ->update([
-                            'fechareintento' => $currentDate
-                        ]);
-
-                    // ENVIAR SMS, SE TOMARA EL MISMO CODIGO, NO SE ACTUALIZARA AQUI
+                // EL CODIGO NO SE ACTUALIZA EN ESTA PARTE, SOLO ES AL VERIFICAR NUMERO QUE GENERA CODIGO
+                // si falla el envio, se hace un return de error
 
 
-                }
+
+
+
+                //*************************************
+
+                // BITACORA DE REGISTROS, CUANTOS INTENTOS A REALIZADO
+
+                $detaRe = new ReintentoSms();
+                $detaRe->id_usuarios = $infoUsuario->id;
+                $detaRe->fecha = $fechaServidor;
+                $detaRe->tipo = 3;
+                $detaRe->save();
+
+                // Ultima fecha para que pueda reintentar usuario
+                Usuario::where('id', $infoUsuario->id)
+                    ->update([
+                        'fechareintento' => $fechaServidor
+                    ]);
+
+                // SEGUNDOS DE ESPERA, PARA ANDROID O IPHONE
+                $segundosDeEspera = 60;
 
                 //************************************
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
-                $secondsToWait = $secondsToWait * 1000;
-
+                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL ANDROID
+                $secondsToWait = $segundosDeEspera * 1000;
 
                 DB::commit();
-                // en la App se reinicia el cronometro a 2 minutos para poder reintentar
-                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
+                // SE ENVIA TIEMPO DE IPHONE DIRECTAMENTE
+                return ['success' => 2, 'segundosandroid' => $secondsToWait, 'segundosiphone' => $segundosDeEspera];
             }else{
-
                 // telefono no encontrado
                 return ['success' => 99];
             }
@@ -252,49 +260,60 @@ class ApiLoginController extends Controller
 
         try {
 
+            // EN ANDROID O IPHONE EL TELEFONO O CODIGO PUEDE VENIR CON ESPACIOS, SE DEBEN QUITAR
+
             $telefono = str_replace(' ', '', $request->telefono);
             $codigo = str_replace(' ', '', $request->codigo);
+            $fechaActual = Carbon::now('America/El_Salvador');
 
             if($infoUsuario = Usuario::where('telefono', $telefono)
                 ->where('codigo', $codigo)
                 ->first()){
 
-                // usuario inactivo
+                // Usuario inactivo
                 if($infoUsuario->activo == 0){
                     return ['success' => 1];
                 }
 
+                // SE LLEVA REGISTRO CUANDO EL NUMERO FUE VERIFICADO
                 if($infoUsuario->verificado == 0){
-                    $currentDate = Carbon::now('America/El_Salvador');
-
                     Usuario::where('id', $infoUsuario->id)
                         ->update([
                             'verificado' => 1,
-                            'fecha_verificado' => $currentDate
+                            'fecha_verificado' => $fechaActual
                         ]);
                 }
 
+                // CREAR TOKEN DE ACCESO
                 $token = JWTAuth::fromUser($infoUsuario);
 
                 // actualizar id notificacion
                 $idOneSignal = $request->idonesignal;
 
-                if($idOneSignal != null){
-                    if(strlen($idOneSignal) == 0){
-                        // vacio no hacer nada
-                    }else{
-                        // Actualizar
-                        Usuario::where('id', $infoUsuario->id)
-                            ->update([
-                                'onesignal' => $idOneSignal,
-                            ]);
-                    }
+                // ACTUALIZAR ID ONE SIGNAL, EVITAR VACIOS
+                if(!empty($idOneSignal)){
+                    // Actualizar
+                    Usuario::where('id', $infoUsuario->id)
+                        ->update([
+                            'onesignal' => $idOneSignal,
+                        ]);
                 }
+
 
                 DB::commit();
                 return ['success' => 2, 'token' => $token, 'id' => strval($infoUsuario->id)];
             }else{
                 // codigo incorrecto
+
+                // LLEVAR UN REGISTRO CUANTAS VECES SE HA EQUIVOCADO
+                if($infoUsuario = Usuario::where('telefono', $telefono)->first()) {
+                    $registro = new ConteoIngresoCodigo();
+                    $registro->id_usuarios = $infoUsuario->id;
+                    $registro->fecha = $fechaActual;
+                    $registro->save();
+                    DB::commit();
+                }
+
                 return ['success' => 3];
             }
         }catch(\Throwable $e){
