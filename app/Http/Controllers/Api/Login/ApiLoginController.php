@@ -32,7 +32,7 @@ class ApiLoginController extends Controller
         try {
 
             // TIEMPO QUE DEBE ESPERAR EL USUARIO PARA REENVIAR CODIGO SMS
-            $limiteSegundosSMS = 20;
+            $limiteSegundosSMS = 60;
 
             // QUITAR ESPACIOS QUE VIENEN DEL NUMERO
             $telefono = str_replace(' ', '', $request->telefono);
@@ -99,14 +99,8 @@ class ApiLoginController extends Controller
                         ]);
                 }
 
-                $segundosIphone = $secondsToWait;
-
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
-                $secondsToWait = $secondsToWait * 1000;
-
                 DB::commit();
-                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait,
-                    'segundosiphone' => $segundosIphone];
+                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
             } else {
 
                 // CUANDO EL TELEFONO A REGISTRAR ES NUEVO, SI ES UN NUMERO ERRONEO, NO GUARDARA NADA
@@ -145,14 +139,8 @@ class ApiLoginController extends Controller
 
                 //************************************
 
-                $segundosIphone = 25;
-
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL SOLO ANDROID
-                $limiteSegundosSMS = $limiteSegundosSMS * 1000;
-
                 DB::commit();
-                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS,
-                    'segundosiphone' => $segundosIphone];
+                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -198,9 +186,6 @@ class ApiLoginController extends Controller
                 // si falla el envio, se hace un return de error
 
 
-
-
-
                 //*************************************
 
                 // BITACORA DE REGISTROS, CUANTOS INTENTOS A REALIZADO
@@ -220,13 +205,9 @@ class ApiLoginController extends Controller
                 // SEGUNDOS DE ESPERA, PARA ANDROID O IPHONE
                 $segundosDeEspera = 60;
 
-                //************************************
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL ANDROID
-                $secondsToWait = $segundosDeEspera * 1000;
-
                 DB::commit();
                 // SE ENVIA TIEMPO DE IPHONE DIRECTAMENTE
-                return ['success' => 2, 'segundosandroid' => $secondsToWait, 'segundosiphone' => $segundosDeEspera];
+                return ['success' => 2, 'segundos' => $segundosDeEspera];
             }else{
                 // telefono no encontrado
                 return ['success' => 99];
@@ -270,11 +251,6 @@ class ApiLoginController extends Controller
                 ->where('codigo', $codigo)
                 ->first()){
 
-                // Usuario inactivo
-                if($infoUsuario->activo == 0){
-                    return ['success' => 1];
-                }
-
                 // SE LLEVA REGISTRO CUANDO EL NUMERO FUE VERIFICADO
                 if($infoUsuario->verificado == 0){
                     Usuario::where('id', $infoUsuario->id)
@@ -299,9 +275,8 @@ class ApiLoginController extends Controller
                         ]);
                 }
 
-
                 DB::commit();
-                return ['success' => 2, 'token' => $token, 'id' => strval($infoUsuario->id)];
+                return ['success' => 1, 'token' => $token, 'id' => strval($infoUsuario->id)];
             }else{
                 // codigo incorrecto
 
@@ -314,7 +289,7 @@ class ApiLoginController extends Controller
                     DB::commit();
                 }
 
-                return ['success' => 3];
+                return ['success' => 2];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
