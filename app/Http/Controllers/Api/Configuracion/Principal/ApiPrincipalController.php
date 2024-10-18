@@ -156,7 +156,7 @@ class ApiPrincipalController extends Controller
 
             try {
                 Log::info("ENTRA EN 3");
-                if ($request->hasFile('imagen')) {
+                if ($request->hasFile('image')) {
                     Log::info("ENTRA EN 4");
                     $cadena = Str::random(15);
                     $tiempo = microtime();
@@ -165,7 +165,7 @@ class ApiPrincipalController extends Controller
 
                     $extension = '.' . $request->imagen->getClientOriginalExtension();
                     $nombreFoto = $nombre . strtolower($extension);
-                    $avatar = $request->file('imagen');
+                    $avatar = $request->file('image');
                     $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
 
                     if ($upload) {
