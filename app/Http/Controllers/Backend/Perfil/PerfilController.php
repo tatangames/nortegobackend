@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Backend\Perfil;
 
 use App\Http\Controllers\Controller;
 use App\Models\Administrador;
+use App\Models\Informacion;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PerfilController extends Controller
@@ -37,4 +39,41 @@ class PerfilController extends Controller
 
         return ['success' => 1];
     }
+
+
+    // ***********************************************************************
+
+
+    public function indexSoporteActualizacion(){
+
+        $info = Informacion::where('id', 1)->first();
+
+        return view('backend.admin.configuracion.soporteapp.vistasoporteapp', compact('info'));
+    }
+
+    public function SoporteActualizacionUpdate(Request $request){
+
+        Log::info("entraaaa");
+
+        $regla = array(
+            'versionandroid' => 'required',
+            'versionios' => 'required',
+            'toggleandroid' => 'required',
+            'toggleios' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){return ['success' => 0];}
+
+
+        Informacion::where('id', 1)
+            ->update(['version_android' => $request->versionandroid,
+                      'version_ios' => $request->versionios,
+                      'android_modal' => $request->toggleandroid,
+                      'ios_modal' => $request->toggleios]);
+
+        return ['success' => 1];
+    }
+
 }

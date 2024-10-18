@@ -17,8 +17,13 @@ return new class extends Migration
             // PARA MOSTRARLE AL USUARIO QUE HAY UNA NUEVA ACTUALIZACION
             // LA SE COMPARA SI SU VERSION NO ES LA ULTIMA
 
-            $table->integer('code_android');
-            $table->integer('code_ios');
+            // Para poder activar los modales
+            $table->boolean('androd_modal');
+            $table->boolean('ios_modal');
+
+            // version de aplicacion
+            $table->string('version_android', 50);
+            $table->string('version_ios', 50);
         });
     }
 

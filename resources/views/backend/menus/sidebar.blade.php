@@ -42,6 +42,13 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.soporte.actualizaciones') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Actualizaciones</p>
+                            </a>
+                        </li>
+
                     </ul>
                  </li>
 
@@ -51,25 +58,41 @@
 
 
                     <li class="nav-item">
-                        <a href="{{ route('admin.estadisticas.administrador') }}" target="frameprincipal" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Estadísticas</p>
+                        <a href="#" class="nav-link">
+                            <i class="far fa-edit"></i>
+                            <p>
+                                Dashboard
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
                         </a>
+
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.estadisticas.administrador') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Estadísticas</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.slider.editor') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Slider</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tiposervicios.editor') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Categoría Servicio</p>
+                                </a>
+                            </li>
+
+                        </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.slider.editor') }}" target="frameprincipal" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Slider</p>
-                        </a>
-                    </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.tiposervicios.editor') }}" target="frameprincipal" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Categoría Servicio</p>
-                        </a>
-                    </li>
 
 
                     <li class="nav-item">
@@ -96,11 +119,8 @@
                                 </a>
                             </li>
 
-
                         </ul>
                     </li>
-
-
 
                     <li class="nav-item">
                         <a href="#" class="nav-link">

@@ -14,8 +14,10 @@ class InformacionSeeder extends Seeder
     public function run(): void
     {
         Informacion::create([
-            'code_android' => '1',
-            'code_ios' => '1',
+            'android_modal' => '1',
+            'ios_modal' => '1',
+            'version_android' => '1.0',
+            'version_ios' => '1.0',
         ]);
     }
 }

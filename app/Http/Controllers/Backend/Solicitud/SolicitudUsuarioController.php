@@ -90,8 +90,8 @@ class SolicitudUsuarioController extends Controller
 
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
-            DISTRITO SANTA ANA NORTE<br>
+            <p id='titulo'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE <br>
+            DISTRITO DE METAPÁN<br>
             NorteGo <br>
             Reporte Red Viales
             </div>";
@@ -227,8 +227,8 @@ class SolicitudUsuarioController extends Controller
 
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
-            DISTRITO SANTA ANA NORTE<br>
+            <p id='titulo'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE<br>
+            DISTRITO DE METAPÁN<br>
             NorteGo <br>
             Reporte Alumbrado Eléctrico
             </div>";
@@ -364,8 +364,8 @@ class SolicitudUsuarioController extends Controller
 
         $tabla = "<div class='content'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>ALCALDÍA MUNICIPAL DE METAPÁN <br>
-            DISTRITO SANTA ANA NORTE<br>
+            <p id='titulo'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE <br>
+            DISTRITO DE METAPÁN<br>
             NorteGo <br>
             Reporte Desechos Solidos
             </div>";

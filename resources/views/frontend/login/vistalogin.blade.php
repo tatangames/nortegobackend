@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <title>Alcaldía Metapán</title>
+    <title>Santa Ana Norte</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/login/bootstrap.min.css') }}">
@@ -17,16 +17,16 @@
     <!-- estilo de sweet -->
     <link href="{{ asset('css/sweetalert2.min.css') }}" rel="stylesheet">
 
+    <link href="{{ asset('css/buttons_estilo.css') }}" rel="stylesheet">
+
+
     <style>
         html, body {
-            height: 90%;
+            height: 100%;
         }
         body {
             font-family: 'Roboto', sans-serif;
             background-image: url({{ asset('images/fondo4.jpg') }});
-            background-size: cover;
-            background-repeat: no-repeat;
-
         }
 
         .demo-container {
@@ -55,37 +55,39 @@
             font-weight:500;
         }
         .image-size-small{
-            width:140px;
+            width:200px;
             margin:0 auto;
         }
         .image-size-small img{
-            width:140px;
+            width:200px;
             margin-bottom:-70px;
         }
-
     </style>
 </head>
 
 <body>
 <div class="container">
     <div>
-        <div class="demo-container" style="margin-top: 25px">
+        <div class="demo-container" style="margin-top: 30px">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-12 mx-auto">
-                        <div class="text-center image-size-small position-relative">
-                            <img src="{{ asset('images/logo.png') }}" class="rounded-circle p-2 bg-white">
-                        </div>
+
+
                         <div class="p-5 bg-white rounded shadow-lg">
-                            <h3 class="mb-2 text-center pt-5"><strong>Alcaldía Municipal de Metapán</strong></h3>
-                            <p class="text-center lead">Distrito Santa Ana Norte App</p>
+                            <div class="text-center image-size-small position-relative">
+                                <img src="{{ asset('images/logosantaana.png') }}" class=" p-2">
+                            </div>
+                            <h3 class="mb-2 text-center pt-5"><strong>&nbsp;</strong></h3>
+                            <p class="text-center lead" style="font-weight: bold">Administración de Santa Ana Norte App</p>
                             <form>
                                 <label style="margin-top: 10px" class="font-500">Usuario</label>
-                                <input class="form-control form-control-lg mb-3" id="usuario" maxlength="50" autocomplete="off" type="text">
+                                <input class="form-control form-control-lg mb-3" id="usuario" autocomplete="off" type="text">
                                 <label class="font-500">Contraseña</label>
-                                <input class="form-control form-control-lg" id="password" maxlength="30" type="password" autocomplete="off">
+                                <input class="form-control form-control-lg" id="password" type="password">
 
-                                <input type="button" value="Entrar" style="margin-top: 35px" onclick="login()" class="btn btn-primary btn-lg w-100 shadow-lg">
+                                <input type="button" value="ACCEDER" style="margin-top: 25px; width: 100%; font-weight: bold" onclick="login()"
+                                       class="button button-uppercase button-primary button-pill">
                             </form>
                         </div>
                     </div>
@@ -121,6 +123,7 @@
         }
     });
 
+
     // inicio de sesion
     function login() {
 
@@ -143,29 +146,46 @@
         formData.append('usuario', usuario);
         formData.append('password', password);
 
-
         axios.post('/login', formData, {
         })
             .then((response) => {
                 closeLoading();
-
-                if (response.data.success === 0) {
-                    toastr.error('Validación incorrecta')
-                } else if (response.data.success === 1) {
-                    window.location = response.data.ruta;
-                } else if (response.data.success === 2) {
-                    toastr.error('Contraseña incorrecta');
-                } else if (response.data.success === 3) {
-                    toastr.error('Usuario no encontrado')
-                } else {
-                    toastr.error('Error al iniciar sesión');
-                }
-
+                verificar(response);
             })
             .catch((error) => {
                 toastr.error('error al iniciar sesión');
                 closeLoading();
             });
+    }
+
+    function verificar(response) {
+
+        if (response.data.success === 0) {
+            toastr.error('Validación incorrecta')
+        } else if (response.data.success === 1) {
+            window.location = response.data.ruta;
+        } else if (response.data.success === 2) {
+            toastr.error('Contraseña incorrecta');
+        } else if (response.data.success === 3) {
+            toastr.error('Usuario no encontrado')
+        } else if (response.data.success === 5) {
+            Swal.fire({
+                title: 'Usuario Bloqueado',
+                text: "Contactar a la administración",
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                }
+            })
+        }
+        else {
+            toastr.error('Error al iniciar sesión');
+        }
     }
 
 

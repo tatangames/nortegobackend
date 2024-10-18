@@ -7,7 +7,7 @@
 </aside>
 
 <footer class="main-footer">
-    <strong>Alcaldía de Metapán</strong>
+    <strong>Santa Ana Norte</strong>
 </footer>
 </div>
 

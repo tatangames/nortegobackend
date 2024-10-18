@@ -116,14 +116,13 @@
             var formData = new FormData();
             formData.append('password', passwordNueva);
 
-            axios.post(url+'/editar-perfil/actualizar', formData, {
+            axios.post('/admin/editar-perfil/actualizar', formData, {
             })
                 .then((response) => {
                     closeLoading()
 
                     if (response.data.success === 1) {
                         toastr.success('Contraseña Actualizada');
-                        $('#modalEditar').modal('hide');
                         document.getElementById('password').value = '';
                         document.getElementById('password1').value = '';
                     }

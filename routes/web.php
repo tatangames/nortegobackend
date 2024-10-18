@@ -149,6 +149,10 @@ Route::get('/admin/catastro/finalizada/index', [SolicitudUsuarioController::clas
 Route::get('/admin/catastro/finalizada/tabla', [SolicitudUsuarioController::class,'tablaCatastroFinalizada']);
 
 
+// --- SOPORTE ACTUALIZACIONES ---
+Route::get('/admin/soporteactualizaciones/index', [PerfilController::class,'indexSoporteActualizacion'])->name('admin.soporte.actualizaciones');
+Route::post('/admin/soporteactualizaciones/actualizar', [PerfilController::class,'SoporteActualizacionUpdate']);
+
 
 
 

@@ -12,9 +12,32 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Services\TwilioService;
+use Exception;
 
 class ApiLoginController extends Controller
 {
+
+    // CENTRAL PARA ENVIO DEL SMS A UN NUMERO DE TELEFONO
+    // ES FIJO A EL SALVADOR - EXTENSION +503
+    private function sendSms($to, $codigo)
+    {
+
+        $message = "Tu código para NorteGo es: " . $codigo;
+
+        $ext = "+503" . $to;
+
+        try {
+            $twilio = new TwilioService();
+            $twilio->sendMessage($ext, $message);
+
+            return ['success' => true, 'message' => 'Mensaje enviado correctamente'];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => 'No se pudo enviar el mensaje: ' . $e->getMessage()];
+        }
+    }
+
+
     public function verificacionTelefono(Request $request)
     {
         $rules = array(
@@ -32,16 +55,16 @@ class ApiLoginController extends Controller
         try {
 
             // TIEMPO QUE DEBE ESPERAR EL USUARIO PARA REENVIAR CODIGO SMS
-            $limiteSegundosSMS = 20;
+            $limiteSegundosSMS = 60;
 
             // QUITAR ESPACIOS QUE VIENEN DEL NUMERO
             $telefono = str_replace(' ', '', $request->telefono);
 
             // GENERAR CODIGO DE 6 DIGITOS
-            $codigo = '';
-            for($i = 0; $i < 6; $i++) {
+            $codigo = '123456';
+            /*for($i = 0; $i < 6; $i++) {
                 $codigo .= mt_rand(0, 9);
-            }
+            }*/
 
             if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
 
@@ -79,6 +102,14 @@ class ApiLoginController extends Controller
                     // Si falla el envio, se hace un return de error
 
 
+                    // Llamar a la función sendSms
+                    $resultadoSMS = $this->sendSms($telefono, $codigo);
+
+                    if (!$resultadoSMS['success']) {
+                        Log::info("ERROR SMS: " . $resultadoSMS['error']);
+                        return ['success' => 2];
+                    }
+
 
 
                     //******* AQUI SE FINALIZA ENVIO SMS ***********
@@ -99,20 +130,12 @@ class ApiLoginController extends Controller
                         ]);
                 }
 
-                $segundosIphone = $secondsToWait;
-
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL
-                $secondsToWait = $secondsToWait * 1000;
-
                 DB::commit();
-                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait,
-                    'segundosiphone' => $segundosIphone];
+                return ['success' => 3, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
             } else {
 
                 // CUANDO EL TELEFONO A REGISTRAR ES NUEVO, SI ES UN NUMERO ERRONEO, NO GUARDARA NADA
                 // EN EXCEPCION DE ENVIO SMS
-
-
 
                 $currentDate = Carbon::now('America/El_Salvador');
 
@@ -132,6 +155,14 @@ class ApiLoginController extends Controller
                 // Si falla el envio, se hace un return de error
 
 
+                // Llamar a la función sendSms
+                $resultadoSMS = $this->sendSms($telefono, $codigo);
+
+                if (!$resultadoSMS['success']) {
+                    Log::info("ERROR SMS: " . $resultadoSMS['error']);
+                    return ['success' => 2];
+                }
+
 
 
                 //******* AQUI SE FINALIZA ENVIO SMS ***********
@@ -145,14 +176,9 @@ class ApiLoginController extends Controller
 
                 //************************************
 
-                $segundosIphone = 25;
-
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL SOLO ANDROID
-                $limiteSegundosSMS = $limiteSegundosSMS * 1000;
 
                 DB::commit();
-                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS,
-                    'segundosiphone' => $segundosIphone];
+                return ['success' => 3, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -198,7 +224,13 @@ class ApiLoginController extends Controller
                 // si falla el envio, se hace un return de error
 
 
+                // Llamar a la función sendSms
+                $resultadoSMS = $this->sendSms($telefono, $infoUsuario->codigo);
 
+                if (!$resultadoSMS['success']) {
+                    Log::info("ERROR SMS: " . $resultadoSMS['error']);
+                    return ['success' => 2];
+                }
 
 
                 //*************************************
@@ -226,7 +258,7 @@ class ApiLoginController extends Controller
 
                 DB::commit();
                 // SE ENVIA TIEMPO DE IPHONE DIRECTAMENTE
-                return ['success' => 2, 'segundosandroid' => $secondsToWait, 'segundosiphone' => $segundosDeEspera];
+                return ['success' => 3, 'segundosandroid' => $secondsToWait, 'segundosiphone' => $segundosDeEspera];
             }else{
                 // telefono no encontrado
                 return ['success' => 99];
@@ -270,11 +302,6 @@ class ApiLoginController extends Controller
                 ->where('codigo', $codigo)
                 ->first()){
 
-                // Usuario inactivo
-                if($infoUsuario->activo == 0){
-                    return ['success' => 1];
-                }
-
                 // SE LLEVA REGISTRO CUANDO EL NUMERO FUE VERIFICADO
                 if($infoUsuario->verificado == 0){
                     Usuario::where('id', $infoUsuario->id)
@@ -301,7 +328,7 @@ class ApiLoginController extends Controller
 
 
                 DB::commit();
-                return ['success' => 2, 'token' => $token, 'id' => strval($infoUsuario->id)];
+                return ['success' => 1, 'token' => $token, 'id' => strval($infoUsuario->id)];
             }else{
                 // codigo incorrecto
 
@@ -314,7 +341,7 @@ class ApiLoginController extends Controller
                     DB::commit();
                 }
 
-                return ['success' => 3];
+                return ['success' => 2];
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);

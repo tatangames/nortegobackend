@@ -42,15 +42,12 @@ class ApiPrincipalController extends Controller
                 return ['success' => 1];
             }
 
-
             DB::beginTransaction();
 
             try {
 
-
                 $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
                 $infoApp = Informacion::where('id', 1)->first();
-
 
                 $resultsBloque = array();
                 $index = 0;
@@ -73,8 +70,11 @@ class ApiPrincipalController extends Controller
 
 
                 return ['success' => 2,
-                    'codeandroid' => $infoApp->code_android,
-                    'codeiphone' => $infoApp->code_ios,
+                    'modalandroid' => $infoApp->android_modal,
+                    'modalios' => $infoApp->ios_modal,
+                    'versionandroid' => $infoApp->version_android,
+                    'versionios' => $infoApp->version_ios,
+
                     'slider' => $arraySlider,
                     'tiposervicio' => $arrayTipoServicio];
 
@@ -95,7 +95,6 @@ class ApiPrincipalController extends Controller
     public function registrarServicioBasico(Request $request){
 
         $rules = array(
-            'iduser' => 'required',
             'idservicio' => 'required',
         );
 
@@ -145,30 +144,29 @@ class ApiPrincipalController extends Controller
                             $titulo = "Nota";
                             $mensaje = "Hay una Solicitud Pendiente en su Ubicación";
 
+                            Log::info("RETORNOOO");
                             return ['success' => 1, 'titulo' => $titulo, "mensaje" => $mensaje];
                         }
                     }
                 }
             }
+            DB::beginTransaction();
 
+            try {
 
-            if ($request->hasFile('imagen')) {
+                if ($request->hasFile('imagen')) {
 
-                $cadena = Str::random(15);
-                $tiempo = microtime();
-                $union = $cadena . $tiempo;
-                $nombre = str_replace(' ', '_', $union);
+                    $cadena = Str::random(15);
+                    $tiempo = microtime();
+                    $union = $cadena . $tiempo;
+                    $nombre = str_replace(' ', '_', $union);
 
-                $extension = '.' . $request->imagen->getClientOriginalExtension();
-                $nombreFoto = $nombre . strtolower($extension);
-                $avatar = $request->file('imagen');
-                $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
+                    $extension = '.' . $request->imagen->getClientOriginalExtension();
+                    $nombreFoto = $nombre . strtolower($extension);
+                    $avatar = $request->file('imagen');
+                    $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
 
-                if ($upload) {
-
-                    DB::beginTransaction();
-
-                    try {
+                    if ($upload) {
 
                         $fechaHoy = Carbon::now('America/El_Salvador');
 
@@ -184,19 +182,20 @@ class ApiPrincipalController extends Controller
                         $registro->visible = 1;
                         $registro->save();
 
+                        Log::info("LLEGAAA");
+
                         DB::commit();
                         return ['success' => 2];
-                    }catch(\Throwable $e){
-                        Log::info("error" . $e);
-                        DB::rollback();
+                    } else {
+                        // error al subir imagen
                         return ['success' => 99];
                     }
-
                 } else {
-                    // error al subir imagen
                     return ['success' => 99];
                 }
-            } else {
+            }catch(\Throwable $e){
+                Log::info("error" . $e);
+                DB::rollback();
                 return ['success' => 99];
             }
         }else{
@@ -239,7 +238,6 @@ class ApiPrincipalController extends Controller
     public function registrarTalaArbolSolicitud(Request $request){
 
         $rules = array(
-            'iduser' => 'required',
             'nombre' => 'required',
             'telefono' => 'required',
             'direccion' => 'required',
@@ -685,7 +683,6 @@ class ApiPrincipalController extends Controller
     public function registrarSolicitudCatastro(Request $request){
 
         $rules = array(
-            'id' => 'required',
             'tiposoli' => 'required',
             'nombre' => 'required',
             'dui' => 'required'
