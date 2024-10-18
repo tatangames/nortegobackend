@@ -18,7 +18,7 @@ return new class extends Migration
             // LA SE COMPARA SI SU VERSION NO ES LA ULTIMA
 
             // Para poder activar los modales
-            $table->boolean('androd_modal');
+            $table->boolean('android_modal');
             $table->boolean('ios_modal');
 
             // version de aplicacion

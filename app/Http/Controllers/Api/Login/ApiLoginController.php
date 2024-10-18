@@ -131,7 +131,11 @@ class ApiLoginController extends Controller
                 }
 
                 DB::commit();
+<<<<<<< HEAD
                 return ['success' => 3, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
+=======
+                return ['success' => 2, 'canretry' => $puedeReenviarSMS, 'segundos' => $secondsToWait];
+>>>>>>> 6872d5d05276d1801f25c8b884ffa22a03be1bea
             } else {
 
                 // CUANDO EL TELEFONO A REGISTRAR ES NUEVO, SI ES UN NUMERO ERRONEO, NO GUARDARA NADA
@@ -176,9 +180,14 @@ class ApiLoginController extends Controller
 
                 //************************************
 
+<<<<<<< HEAD
 
                 DB::commit();
                 return ['success' => 3, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
+=======
+                DB::commit();
+                return ['success' => 2, 'canretry' => 1, 'segundos' => $limiteSegundosSMS];
+>>>>>>> 6872d5d05276d1801f25c8b884ffa22a03be1bea
             }
         }catch(\Throwable $e){
             Log::info("error" . $e);
@@ -224,6 +233,7 @@ class ApiLoginController extends Controller
                 // si falla el envio, se hace un return de error
 
 
+<<<<<<< HEAD
                 // Llamar a la función sendSms
                 $resultadoSMS = $this->sendSms($telefono, $infoUsuario->codigo);
 
@@ -233,6 +243,8 @@ class ApiLoginController extends Controller
                 }
 
 
+=======
+>>>>>>> 6872d5d05276d1801f25c8b884ffa22a03be1bea
                 //*************************************
 
                 // BITACORA DE REGISTROS, CUANTOS INTENTOS A REALIZADO
@@ -252,13 +264,13 @@ class ApiLoginController extends Controller
                 // SEGUNDOS DE ESPERA, PARA ANDROID O IPHONE
                 $segundosDeEspera = 60;
 
-                //************************************
-                // TIEMPO QUE SE USA EN CRONOMETRO PARA APLICACION MOVIL ANDROID
-                $secondsToWait = $segundosDeEspera * 1000;
-
                 DB::commit();
                 // SE ENVIA TIEMPO DE IPHONE DIRECTAMENTE
+<<<<<<< HEAD
                 return ['success' => 3, 'segundosandroid' => $secondsToWait, 'segundosiphone' => $segundosDeEspera];
+=======
+                return ['success' => 2, 'segundos' => $segundosDeEspera];
+>>>>>>> 6872d5d05276d1801f25c8b884ffa22a03be1bea
             }else{
                 // telefono no encontrado
                 return ['success' => 99];
@@ -325,7 +337,6 @@ class ApiLoginController extends Controller
                             'onesignal' => $idOneSignal,
                         ]);
                 }
-
 
                 DB::commit();
                 return ['success' => 1, 'token' => $token, 'id' => strval($infoUsuario->id)];
