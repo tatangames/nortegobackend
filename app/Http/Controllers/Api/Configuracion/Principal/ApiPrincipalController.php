@@ -156,16 +156,16 @@ class ApiPrincipalController extends Controller
 
             try {
                 Log::info("ENTRA EN 3");
-                if ($request->hasFile('imagen')) {
+                if ($request->hasFile('image')) {
                     Log::info("ENTRA EN 4");
                     $cadena = Str::random(15);
                     $tiempo = microtime();
                     $union = $cadena . $tiempo;
                     $nombre = str_replace(' ', '_', $union);
 
-                    $extension = '.' . $request->imagen->getClientOriginalExtension();
+                    $extension = '.' . $request->image->getClientOriginalExtension();
                     $nombreFoto = $nombre . strtolower($extension);
-                    $avatar = $request->file('imagen');
+                    $avatar = $request->file('image');
                     $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
 
                     if ($upload) {
@@ -337,16 +337,16 @@ class ApiPrincipalController extends Controller
 
         if ($userToken = JWTAuth::user($tokenApi)) {
 
-            if ($request->hasFile('imagen')) {
+            if ($request->hasFile('image')) {
 
                 $cadena = Str::random(15);
                 $tiempo = microtime();
                 $union = $cadena . $tiempo;
                 $nombre = str_replace(' ', '_', $union);
 
-                $extension = '.' . $request->imagen->getClientOriginalExtension();
+                $extension = '.' . $request->image->getClientOriginalExtension();
                 $nombreFoto = $nombre . strtolower($extension);
-                $avatar = $request->file('imagen');
+                $avatar = $request->file('image');
                 $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
 
                 if ($upload) {
