@@ -163,7 +163,7 @@ class ApiPrincipalController extends Controller
                     $union = $cadena . $tiempo;
                     $nombre = str_replace(' ', '_', $union);
 
-                    $extension = '.' . $request->imagen->getClientOriginalExtension();
+                    $extension = '.' . $request->image->getClientOriginalExtension();
                     $nombreFoto = $nombre . strtolower($extension);
                     $avatar = $request->file('image');
                     $upload = Storage::disk('archivos')->put($nombreFoto, \File::get($avatar));
