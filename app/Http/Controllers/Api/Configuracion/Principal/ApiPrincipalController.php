@@ -94,6 +94,7 @@ class ApiPrincipalController extends Controller
 
     public function registrarServicioBasico(Request $request){
 
+        Log::info($request->all());
         Log::info("ENTRA EN 1");
 
         $rules = array(
@@ -194,6 +195,7 @@ class ApiPrincipalController extends Controller
                         return ['success' => 99];
                     }
                 } else {
+
                     Log::info("ENTRA EN 6");
                     return ['success' => 99];
                 }
