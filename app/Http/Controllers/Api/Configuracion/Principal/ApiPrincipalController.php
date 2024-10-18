@@ -155,9 +155,9 @@ class ApiPrincipalController extends Controller
             DB::beginTransaction();
 
             try {
-
+                Log::info("ENTRA EN 3");
                 if ($request->hasFile('imagen')) {
-
+                    Log::info("ENTRA EN 4");
                     $cadena = Str::random(15);
                     $tiempo = microtime();
                     $union = $cadena . $tiempo;
@@ -190,9 +190,11 @@ class ApiPrincipalController extends Controller
                         return ['success' => 2];
                     } else {
                         // error al subir imagen
+                        Log::info("ENTRA EN 7");
                         return ['success' => 99];
                     }
                 } else {
+                    Log::info("ENTRA EN 6");
                     return ['success' => 99];
                 }
             }catch(\Throwable $e){
@@ -201,6 +203,7 @@ class ApiPrincipalController extends Controller
                 return ['success' => 99];
             }
         }else{
+            Log::info("ENTRA EN 5");
             return ['success' => 99];
         }
     }
