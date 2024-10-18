@@ -53,8 +53,6 @@ class PerfilController extends Controller
 
     public function SoporteActualizacionUpdate(Request $request){
 
-        Log::info("entraaaa");
-
         $regla = array(
             'versionandroid' => 'required',
             'versionios' => 'required',

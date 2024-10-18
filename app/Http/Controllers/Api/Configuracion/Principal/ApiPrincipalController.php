@@ -94,6 +94,8 @@ class ApiPrincipalController extends Controller
 
     public function registrarServicioBasico(Request $request){
 
+        Log::info("ENTRA EN 1");
+
         $rules = array(
             'idservicio' => 'required',
         );
@@ -105,7 +107,7 @@ class ApiPrincipalController extends Controller
         if ($validator->fails()) {
             return ['success' => 0];
         }
-
+        Log::info("ENTRA EN 2");
         $tokenApi = $request->header('Authorization');
 
         if ($userToken = JWTAuth::user($tokenApi)) {
