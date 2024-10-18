@@ -138,6 +138,10 @@ Route::get('/admin/mediambiente/solicitud-finalizada/talaarbol/tabla', [Solicitu
 
 Route::get('/admin/mediambiente/denuncia/talaarbol/index', [SolicitudUsuarioController::class,'indexDenunciaTalaArbol'])->name('admin.denuncia.tala.arbol');
 Route::get('/admin/mediambiente/denuncia/talaarbol/tabla', [SolicitudUsuarioController::class,'tablaDenunciaTalaArbol']);
+Route::post('/admin/denuncia/tala/borrarregistro', [SolicitudUsuarioController::class,'borrarRegistroDenunciaTala']);
+
+
+
 
 // --- SOLICITUDES DE CATASTRO ---
 Route::get('/admin/catastro/activos/index', [SolicitudUsuarioController::class,'indexCatastroActivas'])->name('admin.catastro.activas');

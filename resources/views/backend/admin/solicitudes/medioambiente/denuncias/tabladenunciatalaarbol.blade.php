@@ -38,6 +38,10 @@
                                             <i class="fas fa-map" title="Mapa"></i>&nbsp; Mapa
                                         </button>
 
+                                        <button style="margin: 6px" type="button" class="btn btn-danger btn-xs" onclick="modalBorrar({{ $dato->id }})">
+                                            <i class="fas fa-trash" title="Borrar"></i>&nbsp; Borrar
+                                        </button>
+
                                     </td>
                                 </tr>
                             @endforeach

@@ -595,6 +595,31 @@ class SolicitudUsuarioController extends Controller
     }
 
 
+    public function borrarRegistroDenunciaTala(Request $request){
+        $regla = array(
+            'id' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($info = DenunciaTalaArbol::where('id', $request->id)->first()){
+
+            if($info->imagen != null){
+                if(Storage::disk('archivos')->exists($info->imagen)){
+                    Storage::disk('archivos')->delete($info->imagen);
+                }
+            }
+
+            DenunciaTalaArbol::where('id', $request->id)->delete();
+
+            return ['success' => 1];
+        }
+
+        return ['success' => 1];
+    }
+
 
     //**********************************************************************
 
