@@ -94,6 +94,7 @@ Route::get('/admin/solicitud/redvial/tabla', [SolicitudUsuarioController::class,
 Route::post('/admin/solicitud/basico/mapa', [SolicitudUsuarioController::class,'mapaSolicitudBasica']);
 Route::post('/admin/solicitud/redvial/finalizar', [SolicitudUsuarioController::class,'finalizarSolicitudRedVial']);
 Route::get('/admin/solicitud/redvial/reportevarios/{listado}', [SolicitudUsuarioController::class, 'reportePdfRedVialVarios']);
+Route::post('/admin/solicitud/redvial/borrarregistro', [SolicitudUsuarioController::class,'borrarRegistroRedVial'])->name('admin.solicitud.redvial.activa.index');
 
 
 // --- SOLICITUDES DE RED VIALES - FINALIZADA ---

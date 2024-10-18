@@ -267,6 +267,48 @@
             document.getElementById("imgModal").setAttribute("src", atributo);
         }
 
+        function modalBorrar(id){
+
+            Swal.fire({
+                title: 'Borrar',
+                text: "Eliminar el Registro",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Si'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    borrarRegistro(id)
+                }
+            })
+        }
+
+        function borrarRegistro(id){
+
+            let formData = new FormData();
+            formData.append('id', id);
+            openLoading();
+
+            axios.post('/admin/solicitud/redvial/borrarregistro', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Borrado');
+                        recargar();
+                    }
+                    else{
+                        toastr.error('Error al borrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al borrar');
+                    closeLoading();
+                });
+        }
 
     </script>
 

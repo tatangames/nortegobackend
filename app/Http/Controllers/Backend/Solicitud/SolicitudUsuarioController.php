@@ -9,6 +9,7 @@ use App\Models\ServicioCatastro;
 use App\Models\SolicitudTalaArbol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudUsuarioController extends Controller
 {
@@ -144,6 +145,32 @@ class SolicitudUsuarioController extends Controller
         $mpdf->Output();
     }
 
+
+    public function borrarRegistroRedVial(Request $request){
+
+        $regla = array(
+            'id' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($info = DenunciaBasico::where('id', $request->id)->first()){
+
+            if($info->imagen != null){
+                if(Storage::disk('archivos')->exists($info->imagen)){
+                    Storage::disk('archivos')->delete($info->imagen);
+                }
+            }
+
+            DenunciaBasico::where('id', $request->id)->delete();
+
+            return ['success' => 1];
+        }
+
+        return ['success' => 1];
+    }
 
 
 

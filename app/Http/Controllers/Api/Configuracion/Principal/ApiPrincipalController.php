@@ -94,9 +94,6 @@ class ApiPrincipalController extends Controller
 
     public function registrarServicioBasico(Request $request){
 
-        Log::info($request->all());
-        Log::info("ENTRA EN 1");
-
         $rules = array(
             'idservicio' => 'required',
         );
@@ -108,7 +105,6 @@ class ApiPrincipalController extends Controller
         if ($validator->fails()) {
             return ['success' => 0];
         }
-        Log::info("ENTRA EN 2");
         $tokenApi = $request->header('Authorization');
 
         if ($userToken = JWTAuth::user($tokenApi)) {
@@ -147,7 +143,6 @@ class ApiPrincipalController extends Controller
                             $titulo = "Nota";
                             $mensaje = "Hay una Solicitud Pendiente en su Ubicación";
 
-                            Log::info("RETORNOOO");
                             return ['success' => 1, 'titulo' => $titulo, "mensaje" => $mensaje];
                         }
                     }
@@ -156,9 +151,9 @@ class ApiPrincipalController extends Controller
             DB::beginTransaction();
 
             try {
-                Log::info("ENTRA EN 3");
+
                 if ($request->hasFile('image')) {
-                    Log::info("ENTRA EN 4");
+
                     $cadena = Str::random(15);
                     $tiempo = microtime();
                     $union = $cadena . $tiempo;
@@ -185,8 +180,6 @@ class ApiPrincipalController extends Controller
                         $registro->visible = 1;
                         $registro->save();
 
-                        Log::info("LLEGAAA");
-
                         DB::commit();
                         return ['success' => 2];
                     } else {
@@ -195,17 +188,13 @@ class ApiPrincipalController extends Controller
                         return ['success' => 99];
                     }
                 } else {
-
-                    Log::info("ENTRA EN 6");
                     return ['success' => 99];
                 }
             }catch(\Throwable $e){
-                Log::info("error" . $e);
                 DB::rollback();
                 return ['success' => 99];
             }
         }else{
-            Log::info("ENTRA EN 5");
             return ['success' => 99];
         }
     }
