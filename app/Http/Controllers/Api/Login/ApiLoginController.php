@@ -61,10 +61,10 @@ class ApiLoginController extends Controller
             $telefono = str_replace(' ', '', $request->telefono);
 
             // GENERAR CODIGO DE 6 DIGITOS
-            $codigo = '123456';
-            /*for($i = 0; $i < 6; $i++) {
+            $codigo = '';
+            for($i = 0; $i < 6; $i++) {
                 $codigo .= mt_rand(0, 9);
-            }*/
+            }
 
             if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
 

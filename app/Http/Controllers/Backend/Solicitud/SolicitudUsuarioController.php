@@ -7,9 +7,12 @@ use App\Models\DenunciaBasico;
 use App\Models\DenunciaTalaArbol;
 use App\Models\ServicioCatastro;
 use App\Models\SolicitudTalaArbol;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\EnviarNotificacion;
+
 
 class SolicitudUsuarioController extends Controller
 {
@@ -33,8 +36,7 @@ class SolicitudUsuarioController extends Controller
             ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.redvial.activas.tablaredvial', compact('listado'));
@@ -73,6 +75,15 @@ class SolicitudUsuarioController extends Controller
             ->update([
                 'estado' => 2,
             ]);
+
+        if($infoDenuncia = DenunciaBasico::where('id', $request->id)->first()){
+            $infoUsuario = Usuario::where('id', $infoDenuncia->id_usuario)->first();
+            if($infoUsuario->onesignal != null){
+                $tiNo = "Resolución";
+                $desNo = "La problemática ha sido resuelta";
+                dispatch(new EnviarNotificacion($infoUsuario->onesignal, $tiNo, $desNo));
+            }
+        }
 
         return ['success' => 1];
     }
@@ -189,8 +200,7 @@ class SolicitudUsuarioController extends Controller
             ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.redvial.finalizadas.tablaredvialfinalizada', compact('listado'));
@@ -212,8 +222,7 @@ class SolicitudUsuarioController extends Controller
             ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.alumbrado.activas.tablaalumbrado', compact('listado'));
@@ -236,6 +245,15 @@ class SolicitudUsuarioController extends Controller
             ->update([
                 'estado' => 2,
             ]);
+
+        if($infoDenuncia = DenunciaBasico::where('id', $request->id)->first()){
+            $infoUsuario = Usuario::where('id', $infoDenuncia->id_usuario)->first();
+            if($infoUsuario->onesignal != null){
+                $tiNo = "Resolución";
+                $desNo = "La problemática ha sido resuelta";
+                dispatch(new EnviarNotificacion($infoUsuario->onesignal, $tiNo, $desNo));
+            }
+        }
 
         return ['success' => 1];
     }
@@ -323,8 +341,7 @@ class SolicitudUsuarioController extends Controller
             ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.redvial.finalizadas.tablaredvialfinalizada', compact('listado'));
@@ -349,8 +366,7 @@ class SolicitudUsuarioController extends Controller
         ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.desechos.activas.tabladesechos', compact('listado'));
@@ -373,6 +389,15 @@ class SolicitudUsuarioController extends Controller
             ->update([
                 'estado' => 2,
             ]);
+
+        if($infoDenuncia = DenunciaBasico::where('id', $request->id)->first()){
+            $infoUsuario = Usuario::where('id', $infoDenuncia->id_usuario)->first();
+            if($infoUsuario->onesignal != null){
+                $tiNo = "Resolución";
+                $desNo = "La problemática ha sido resuelta";
+                dispatch(new EnviarNotificacion($infoUsuario->onesignal, $tiNo, $desNo));
+            }
+        }
 
         return ['success' => 1];
     }
@@ -460,8 +485,7 @@ class SolicitudUsuarioController extends Controller
             ->get();
 
         foreach ($listado as $dato){
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha));
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha));
         }
 
         return view('backend.admin.solicitudes.desechos.finalizadas.tabladesechosfinalizada', compact('listado'));
@@ -544,6 +568,15 @@ class SolicitudUsuarioController extends Controller
             ->update([
                 'estado' => 2,
             ]);
+
+        if($infoSolicitud = SolicitudTalaArbol::where('id', $request->id)->first()){
+            $infoUsuario = Usuario::where('id', $infoSolicitud->id_usuario)->first();
+            if($infoUsuario->onesignal != null){
+                $tiNo = "Resolución";
+                $desNo = "La problemática ha sido resuelta";
+                dispatch(new EnviarNotificacion($infoUsuario->onesignal, $tiNo, $desNo));
+            }
+        }
 
         return ['success' => 1];
     }
@@ -686,6 +719,22 @@ class SolicitudUsuarioController extends Controller
             ->update([
                 'estado' => $request->estado,
             ]);
+
+        if($infoSolicitud = ServicioCatastro::where('id', $request->id)->first()){
+            $infoUsuario = Usuario::where('id', $infoSolicitud->id_usuario)->first();
+            if($infoUsuario->onesignal != null){
+
+                if($request->estado == 1){
+                    $tiNo = "Resolución";
+                    $desNo = "Solvencia lista para retirar en Ventanilla ✅";
+                }else{
+                    $tiNo = "Resolución";
+                    $desNo = "Pendiente de Pago, pasar a Ventanilla 🔎";
+                }
+
+                dispatch(new EnviarNotificacion($infoUsuario->onesignal, $tiNo, $desNo));
+            }
+        }
 
         return ['success' => 1];
     }

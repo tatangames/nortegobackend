@@ -15,7 +15,6 @@
                             </tr>
                             </thead>
                             <tbody>
-
                             @foreach($listado as $dato)
                                 <tr data-info="{{ $dato->id }}">
 
@@ -40,7 +39,6 @@
 
                                 </tr>
                             @endforeach
-
                             </tbody>
                         </table>
                     </div>
@@ -50,22 +48,35 @@
     </div>
 </section>
 
-
 <script>
     $(function () {
+        // Plug-in para ordenar el formato de fecha y hora 'dd-mm-yyyy hh:mm AM/PM'
+        $.fn.dataTable.ext.order['datetime-ddmmyyyy-hhmm'] = function(settings, colIdx) {
+            return this.api().column(colIdx, { order: 'index' }).nodes().map(function(td, i) {
+                var dateStr = $(td).text().trim();
+                var dateParts = dateStr.match(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}) (AM|PM)/);
 
-        // Añadir el tipo de datos personalizado para fechas en formato d-m-y
-        $.fn.dataTable.ext.type.order['date-dmy-pre'] = function (d) {
-            // Divide la fecha por el guion
-            var parts = d.split('-');
-            // Retorna en formato YYYYMMDD
-            return parts[2] + parts[1] + parts[0];
+                if (!dateParts) {
+                    return 0;
+                }
+
+                var day = dateParts[1];
+                var month = dateParts[2];
+                var year = dateParts[3];
+                var hour = parseInt(dateParts[4]);
+                var minute = dateParts[5];
+                var ampm = dateParts[6];
+
+                // Convertir el formato de 12 horas a 24 horas
+                if (ampm === "PM" && hour < 12) hour += 12;
+                if (ampm === "AM" && hour === 12) hour = 0;
+
+                return new Date(year, month - 1, day, hour, minute).getTime();
+            });
         };
 
+        // Inicializar la tabla DataTable con orden descendente en la columna de Fecha
         $("#tabla").DataTable({
-            columnDefs: [
-                { type: 'date-dmy', targets: 0 } // La columna de fecha es la primera (índice 0)
-            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -75,7 +86,6 @@
             "pagingType": "full_numbers",
             "lengthMenu": [[10, 25, 50, 100, 150, -1], [10, 25, 50, 100, 150, "Todo"]],
             "language": {
-
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
                 "sZeroRecords": "No se encontraron resultados",
@@ -83,10 +93,7 @@
                 "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
                 "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
                 "sLoadingRecords": "Cargando...",
                 "oPaginate": {
                     "sFirst": "Primero",
@@ -98,11 +105,14 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-
             },
-            "responsive": true, "lengthChange": true, "autoWidth": false,
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "order": [[0, 'desc']],  // Ordena la primera columna (Fecha) de forma descendente
+            "columnDefs": [
+                { "orderDataType": "datetime-ddmmyyyy-hhmm", "targets": [0] } // Aplica a la columna de Fecha
+            ]
         });
     });
-
-
 </script>

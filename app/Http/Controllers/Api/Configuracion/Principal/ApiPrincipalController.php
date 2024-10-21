@@ -15,6 +15,7 @@ use App\Models\Servicios;
 use App\Models\Slider;
 use App\Models\SolicitudTalaArbol;
 use App\Models\TipoServicio;
+use App\Models\Usuario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,8 @@ class ApiPrincipalController extends Controller
 
     public function listadoPrincipal(Request $request){
 
+        // solo se recibe parametro: onesignal
+
         // sacar usuario del token
         $tokenApi = $request->header('Authorization');
 
@@ -45,6 +48,13 @@ class ApiPrincipalController extends Controller
             DB::beginTransaction();
 
             try {
+
+                $idOneSignal = $request->onesignal;
+                if($idOneSignal != null){
+                    Usuario::where('id', $userToken->id)->update([
+                        'onesignal' => $idOneSignal,
+                    ]);
+                }
 
                 $arraySlider = Slider::where('activo', 1)->orderBy('posicion', 'ASC')->get();
                 $infoApp = Informacion::where('id', 1)->first();
@@ -68,7 +78,7 @@ class ApiPrincipalController extends Controller
                     $index++;
                 }
 
-
+                DB::commit();
                 return ['success' => 2,
                     'modalandroid' => $infoApp->android_modal,
                     'modalios' => $infoApp->ios_modal,
