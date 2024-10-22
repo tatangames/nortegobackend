@@ -61,19 +61,21 @@ class ApiLoginController extends Controller
             $telefono = str_replace(' ', '', $request->telefono);
 
             // GENERAR CODIGO DE 6 DIGITOS
-            $codigo = '123456';
-            /*for($i = 0; $i < 6; $i++) {
+            $codigo = '';
+            for($i = 0; $i < 6; $i++) {
                 $codigo .= mt_rand(0, 9);
-            }*/
+            }
 
             if($infoUsuario = Usuario::where('telefono', $telefono)->first()){
-
 
 
                 // APLICACION EN DESARROLLO
                 //return ['success' => 100];
 
-
+                // SOLO PARA CONTROL DE ACCESO DE GOOGLE PLAY
+                if($telefono == "75825072"){
+                    $codigo = "123456";
+                }
 
 
 
@@ -239,12 +241,12 @@ class ApiLoginController extends Controller
 
 
                 // Llamar a la función sendSms
-                /*$resultadoSMS = $this->sendSms($telefono, $infoUsuario->codigo);
+                $resultadoSMS = $this->sendSms($telefono, $infoUsuario->codigo);
 
                 if (!$resultadoSMS['success']) {
                     Log::info("ERROR SMS: " . $resultadoSMS['error']);
                     return ['success' => 2];
-                }*/
+                }
 
                 //*************************************
 
